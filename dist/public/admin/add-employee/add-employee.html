@@ -1,0 +1,33 @@
+//add_employee.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Employee</title>
+</head>
+<body>
+  <h2>Add New Employee</h2>
+
+  <form action="/submit_employee" method="POST">
+    <label for="firstname">First Name:</label><br>
+    <input type="text" id="firstname" name="firstName" required><br><br>
+
+    <label for="lastname">Last Name:</label><br>
+    <input type="text" id="lastname" name="lastName" required><br><br>
+
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="phone">Phone Number:</label><br>
+    <input type="tel" id="phone" name="phoneNumber" required><br><br>
+
+    <input type="submit" value="Add Employee">
+  </form>
+
+  <br>
+  <button onclick="location.href='admin_home.html'">Back to Admin Home</button>
+</body>
+</html>
