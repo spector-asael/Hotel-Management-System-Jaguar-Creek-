@@ -1,4 +1,5 @@
 import { User } from "../interface/usersInterfacesH";
+import pool from "../db/config"; // Adjust path to your db connection
 
 export class UserClass implements User {
   constructor(
@@ -12,32 +13,57 @@ export class UserClass implements User {
 
   authenticate(username: string, password: string): number {
     if (this.username === username && this.password === password) {
-      // Mock authentication levels
       if (this.username === "admin") return 2;
       if (this.username.startsWith("emp")) return 1;
       return 0;
     }
-    return -1; // Failed login
+    return -1;
   }
 
-  sendMessage(
-    messageMap: Map<number, string[]>,
-    content: string,
-    senderID: number,
-    receiverID: number
-  ): void {
-    const key = receiverID;
-    if (!messageMap.has(key)) {
-      messageMap.set(key, []);
+  async sendMessage(content: string, senderID: number, receiverID: number): Promise<void> {
+    try {
+      // Step 1: Find or create a conversation between sender and receiver
+      let conversationRes = await pool.query(
+        `SELECT id FROM conversations 
+         WHERE (guest_id = $1 AND employee_id = $2)
+            OR (guest_id = $2 AND employee_id = $1) 
+         LIMIT 1`,
+        [senderID, receiverID]
+      );
+
+      let conversationID;
+
+      if (conversationRes.rows.length === 0) {
+        const newConv = await pool.query(
+          `INSERT INTO conversations (guest_id, employee_id) 
+           VALUES ($1, $2) RETURNING id`,
+          [senderID, receiverID]
+        );
+        conversationID = newConv.rows[0].id;
+      } else {
+        conversationID = conversationRes.rows[0].id;
+      }
+
+      // Step 2: Insert the message
+      await pool.query(
+        `INSERT INTO messages (conversation_id, author_id, content) 
+         VALUES ($1, $2, $3)`,
+        [conversationID, senderID, content]
+      );
+    } catch (err) {
+      console.error("Error sending message:", err);
+      throw err;
     }
-    messageMap.get(key)?.push(`From ${senderID}: ${content}`);
   }
 
-  deleteMessage(messageNode: string): boolean {
-    // Mock delete logic
-    // You might use message ID or index in actual implementation
-    // Just returns true here
-    return true;
+  async deleteMessage(messageID: number): Promise<boolean> {
+    try {
+      const res = await pool.query(`DELETE FROM messages WHERE id = $1`, [messageID]);
+      return typeof res.rowCount === 'number' && res.rowCount > 0;
+    } catch (err) {
+      console.error("Error deleting message:", err);
+      return false;
+    }
   }
 
   // Getters & Setters
@@ -80,7 +106,7 @@ export class UserClass implements User {
   setFirstName(name: string): void {
     this.firstName = name;
   }
-  // Adding missing getter and setter for lastName
+
   getLastName(): string {
     return this.lastName;
   }

@@ -5,28 +5,18 @@ import { HotelReservation } from "./reservationInterface"; // Your reservation o
 
 export interface Employee extends User {
   displayEmployee(): void;
-  
+
   bookReservation(
     guest: Guest,
-    reservationMap: Map<number, HotelReservation>,
     startDate: string,
     endDate: string,
     room: HotelRoom
-  ): boolean;
+  ): Promise<boolean>;
 
-  cancelReservation(
-    reservationMap: Map<number, HotelReservation>,
-    reservation: HotelReservation
-  ): boolean;
+  cancelReservation(reservationID: number): Promise<boolean>;
 
-  searchReservation(
-    reservationMap: Map<number, HotelReservation>,
-    name: string,
-    id: number
-  ): HotelReservation | undefined;
+  searchReservation(name: string, id: number): Promise<HotelReservation | null>;
 
-  processTransaction(
-    reservation: HotelReservation,
-    amount: number
-  ): boolean;
+  processTransaction(reservationID: number, amount: number): Promise<boolean>;
 }
+

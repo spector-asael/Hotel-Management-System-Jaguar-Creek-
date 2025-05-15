@@ -1,46 +1,32 @@
-import { User } from "./usersInterfacesH";
-import { HotelRoom } from "./roomInterface";
-import { HotelReservation } from "./reservationInterface";
+// guestInterface.ts
+
+import { User } from './usersInterfacesH'; // Assuming userInterface.ts contains the User interface
 
 export interface Guest extends User {
-  // Properties inherited from User
-  id: number;
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
+    displayGuest(): void;
 
-  // Methods for Guest
-  displayGuest(): void;
+    bookReservation(
+        startDate: string,
+        endDate: string,
+        hotelRoom: any,
+        reservationDetails: any
+    ): Promise<boolean>;
 
-  bookReservation(
-    startDate: string,
-    endDate: string,
-    room: HotelRoom,
-    reservationMap: Map<number, HotelReservation>
-  ): boolean;
+    viewReservation(reservation: any): Promise<void>;
 
-  viewReservation(reservation: HotelReservation): void;
+    signUp(
+        username: string,
+        password: string,
+        firstName: string,
+        lastName: string,
+        phoneNumber: string
+    ): Promise<boolean>;
 
-  signUp(
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string,
-    guestMap: Map<number, Guest>
-  ): boolean;
-
-  editGuest(
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-  ): void;
-
-  // Getter methods for first and last name
-  getFirstName(): string;
-  getLastName(): string;
+    editGuest(
+        username: string,
+        firstName: string,
+        lastName: string,
+        password: string,
+        phoneNumber: string
+    ): Promise<boolean>;
 }

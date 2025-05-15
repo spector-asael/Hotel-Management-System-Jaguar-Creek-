@@ -1,159 +1,202 @@
-import { UserClass } from "./usersC";
-import { Guest } from "../interface/guesInterface";
-import { HotelRoom } from "../interface/roomInterface";
-import { HotelReservation } from "../interface/reservationInterface";
-import { HotelReservationClass } from "../models/reservationC"; // make sure the path is correct
+// guestC.ts
 
-class GuestClass implements Guest {
-  id: number;
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
+import { Guest } from '../interface/guesInterface';
+import  pool  from "../db/config";
 
-  constructor(
-    id: number,
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-  ) {
-    this.id = id;
-    this.username = username;
-    this.password = password;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.phoneNumber = phoneNumber;
-  }
+// PostgreSQL database connection
 
-  getFirstName(): string {
-    return this.firstName;
-  }
 
-  getLastName(): string {
-    return this.lastName;
-  }
+export class Guests implements Guest {
+    id: number;
+    username: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
 
-  authenticate(username: string, password: string): number {
-    return this.username === username && this.password === password ? 1 : 0;
-  }
-
-  sendMessage(
-    messageMap: Map<number, string[]>,
-    content: string,
-    senderID: number,
-    receiverID: number
-  ): void {
-    if (!messageMap.has(receiverID)) {
-      messageMap.set(receiverID, []);
+    constructor(
+        id: number,
+        username: string,
+        password: string,
+        firstName: string,
+        lastName: string,
+        phoneNumber: string
+    ) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
     }
-    messageMap.get(receiverID)?.push(`From ${senderID}: ${content}`);
-  }
 
-  deleteMessage(messageNode: string): boolean {
-    // Placeholder logic
-    return true;
-  }
+    // Display guest details
+    displayGuest(): void {
+        console.log(`Guest: ${this.firstName} ${this.lastName}`);
+        console.log(`Username: ${this.username}`);
+        console.log(`Phone: ${this.phoneNumber}`);
+    }
 
-  displayGuest(): void {
-    console.log(`${this.firstName} ${this.lastName}`);
-  }
+    // Book reservation
+    async bookReservation(
+        startDate: string,
+        endDate: string,
+        hotelRoom: any,
+        reservationDetails: any
+    ): Promise<boolean> {
+        const client = await pool.connect();
+        try {
+            await client.query(
+                'INSERT INTO reservations (guest_id, room_id, start_date, end_date) VALUES ($1, $2, $3, $4)',
+                [this.id, hotelRoom.roomId, startDate, endDate]
+            );
+            return true;
+        } catch (error) {
+            console.error('Error booking reservation:', error);
+            return false;
+        } finally {
+            client.release();
+        }
+    }
 
-  bookReservation(
-    startDate: string,
-    endDate: string,
-    room: HotelRoom,
-    reservationMap: Map<number, HotelReservation>
-  ): boolean {
-    const reservationID = Date.now(); // unique ID
-    const reservation = new HotelReservationClass(
-      reservationID,
-      this,
-      room,
-      new Date(startDate),
-      new Date(endDate),
-      reservationID
-    );
-    reservationMap.set(reservation.getReservationID(), reservation);
-    return true;
-  }
+    // View reservation
+    async viewReservation(reservation: any): Promise<void> {
+        const client = await pool.connect();
+        try {
+            const result = await client.query(
+                'SELECT * FROM reservations WHERE reservation_id = $1 AND guest_id = $2',
+                [reservation.reservationId, this.id]
+            );
+            console.log('Reservation:', result.rows[0]);
+        } catch (error) {
+            console.error('Error viewing reservation:', error);
+        } finally {
+            client.release();
+        }
+    }
 
-  viewReservation(reservation: HotelReservation): void {
-    console.log(`Reservation for ${this.firstName}:`);
-    console.log(
-      `Room: ${reservation.getHotel().getRoomName()}, Dates: ${reservation.getStartDate().toDateString()} to ${reservation.getEndDate().toDateString()}`
-    );
-  }
+    // Sign up as a guest
+    async signUp(
+        username: string,
+        password: string,
+        firstName: string,
+        lastName: string,
+        phoneNumber: string
+    ): Promise<boolean> {
+        const client = await pool.connect();
+        try {
+            await client.query(
+                'INSERT INTO guests (username, password, first_name, last_name, phone_number) VALUES ($1, $2, $3, $4, $5)',
+                [username, password, firstName, lastName, phoneNumber]
+            );
+            return true;
+        } catch (error) {
+            console.error('Error signing up guest:', error);
+            return false;
+        } finally {
+            client.release();
+        }
+    }
 
-  signUp(
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string,
-    guestMap: Map<number, Guest>
-  ): boolean {
-    const id = Date.now();
-    const newGuest = new GuestClass(id, username, password, firstName, lastName, phoneNumber);
-    guestMap.set(id, newGuest);
-    return true;
-  }
+    // Edit guest info
+    async editGuest(
+        username: string,
+        firstName: string,
+        lastName: string,
+        password: string,
+        phoneNumber: string
+    ): Promise<boolean> {
+        const client = await pool.connect();
+        try {
+            await client.query(
+                'UPDATE guests SET first_name = $1, last_name = $2, password = $3, phone_number = $4 WHERE username = $5',
+                [firstName, lastName, password, phoneNumber, username]
+            );
+            return true;
+        } catch (error) {
+            console.error('Error editing guest:', error);
+            return false;
+        } finally {
+            client.release();
+        }
+    }
 
-  editGuest(
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-  ): void {
-    this.username = username;
-    this.password = password;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.phoneNumber = phoneNumber;
-  }
+    // USER INTERFACE METHODS
 
-  getID(): number {
-    return this.id;
-  }
+    authenticate(username: string, password: string): number {
+        return this.username === username && this.password === password ? this.id : -1;
+    }
 
-  setID(id: number): void {
-    this.id = id;
-  }
+    async sendMessage(content: string, senderID: number, receiverID: number): Promise<void> {
+        const client = await pool.connect();
+        try {
+            await client.query(
+                'INSERT INTO messages (content, sender_id, receiver_id) VALUES ($1, $2, $3)',
+                [content, senderID, receiverID]
+            );
+        } catch (error) {
+            console.error('Error sending message:', error);
+        } finally {
+            client.release();
+        }
+    }
 
-  getPhoneNumber(): string {
-    return this.phoneNumber;
-  }
+    async deleteMessage(messageID: number): Promise<boolean> {
+        const client = await pool.connect();
+        try {
+            const result = await client.query(
+                'DELETE FROM messages WHERE id = $1 AND sender_id = $2',
+                [messageID, this.id]
+            );
+            return (result.rowCount ?? 0) > 0;
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            return false;
+        } finally {
+            client.release();
+        }
+    }
 
-  setPhoneNumber(phone: string): void {
-    this.phoneNumber = phone;
-  }
+    // Getters & Setters
+    getID(): number {
+        return this.id;
+    }
+    setID(id: number): void {
+        this.id = id;
+    }
 
-  getUsername(): string {
-    return this.username;
-  }
+    getPhoneNumber(): string {
+        return this.phoneNumber;
+    }
+    setPhoneNumber(phone: string): void {
+        this.phoneNumber = phone;
+    }
 
-  setUsername(username: string): void {
-    this.username = username;
-  }
+    getUsername(): string {
+        return this.username;
+    }
+    setUsername(username: string): void {
+        this.username = username;
+    }
 
-  getPassword(): string {
-    return this.password;
-  }
+    getPassword(): string {
+        return this.password;
+    }
+    setPassword(password: string): void {
+        this.password = password;
+    }
 
-  setPassword(password: string): void {
-    this.password = password;
-  }
+    getFirstName(): string {
+        return this.firstName;
+    }
+    setFirstName(name: string): void {
+        this.firstName = name;
+    }
 
-  setFirstName(firstName: string): void {
-    this.firstName = firstName;
-  }
-
-  setLastName(lastName: string): void {
-    this.lastName = lastName;
-  }
+    getLastName(): string {
+        return this.lastName;
+    }
+    setLastName(name: string): void {
+        this.lastName = name;
+    }
 }
-
-export { GuestClass };
