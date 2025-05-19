@@ -1,4 +1,4 @@
-import { User } from "../interface/usersInterfacesH";
+import { User } from "../interfaces/usersInterfacesH";
 import pool from "../db/config"; // Adjust path to your db connection
 
 export class UserClass implements User {

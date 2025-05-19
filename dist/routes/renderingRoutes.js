@@ -3,8 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const renderingFiles_js_1 = require("../controller/renderingFiles.js");
+const renderingVisitorFiles_js_1 = require("../controller/renderingVisitorFiles.js");
 const express_1 = __importDefault(require("express"));
-const renderingFilesRouter = (0, express_1.default)();
-renderingFilesRouter.get('/login', renderingFiles_js_1.loadLoginForm);
-exports.default = renderingFilesRouter;
+const renderingVisitorFilesRouter = express_1.default.Router();
+renderingVisitorFilesRouter.get('/login', renderingVisitorFiles_js_1.loadLoginForm);
+renderingVisitorFilesRouter.get('/homepage', renderingVisitorFiles_js_1.loadHomePage);
+renderingVisitorFilesRouter.get('/signup', renderingVisitorFiles_js_1.loadSignupForm);
+exports.default = renderingVisitorFilesRouter;

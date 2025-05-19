@@ -1,6 +1,6 @@
-import { HotelReservation } from "../interface/reservationInterface";
-import { Guest } from "../interface/guesInterface";
-import { HotelRoom } from "../interface/roomInterface";
+import { HotelReservation } from "../interfaces/reservationInterface";
+import { Guest } from "../interfaces/guesInterface";
+import { HotelRoom } from "../interfaces/roomInterface";
 
 export class HotelReservationClass implements HotelReservation {
   private id: number;

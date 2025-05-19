@@ -6,7 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const renderingRoutes_1 = __importDefault(require("./routes/renderingRoutes"));
+const express_session_1 = __importDefault(require("express-session"));
+const authMiddleware_1 = require("./auth/authMiddleware"); // adjust path if needed
 const app = (0, express_1.default)();
+app.set('view engine', 'ejs'); // tells Express to use EJS
+console.log("DIRNAME:", __dirname);
+app.set('views', path_1.default.join(process.cwd(), './dist/views')); // set the views directory to the dist folder
+console.log('Express views directory after set:', app.get('views'));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(path_1.default.join(process.cwd(), "./dist/public")));
 app.use(express_1.default.json());
@@ -15,7 +21,14 @@ app.use((req, res, next) => {
     console.log(`[${timestamp}] ${req.method} ${req.url}`);
     next();
 });
-app.use('/', (renderingRoutes_1.default));
+app.use((0, express_session_1.default)({
+    secret: 'keyboard cat', // used to sign the session ID cookie
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false, // don't create session until something is stored
+    cookie: { secure: false } // set to true if using HTTPS
+}));
+app.use(authMiddleware_1.requireLogin);
+app.use('/visitor', (renderingRoutes_1.default));
 app.use((req, res) => {
     res.status(404).send("Error");
 });

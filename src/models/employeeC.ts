@@ -1,8 +1,8 @@
 import { UserClass } from "./usersC";
-import { Employee } from "../interface/employeeInterface";
-import { Guest } from "../interface/guesInterface";
-import { HotelRoom } from "../interface/roomInterface";
-import { HotelReservation } from "../interface/reservationInterface";
+import { Employee } from "../interfaces/employeeInterface";
+import { Guest } from "../interfaces/guesInterface";
+import { HotelRoom } from "../interfaces/roomInterface";
+import { HotelReservation } from "../interfaces/reservationInterface";
 import { HotelReservationClass } from "../models/reservationC"; // adjust path if needed
 import pool from "../db/config";
 
