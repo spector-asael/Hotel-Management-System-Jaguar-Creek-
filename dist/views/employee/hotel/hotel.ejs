@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/employee/css/employee.css">
+    <title>Hotels</title>
+</head>
+<body>
+    <%- include('../partials/menu') %>
+    <table class="hotel-table">
+        <thead>
+          <tr>
+            <th>Name of Hotel</th>
+            <th>Number of Rooms</th>
+            <th>Number of Available Rooms</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example row -->
+          <tr>
+            <td>Ocean Breeze Hotel</td>
+            <td>120</td>
+            <td>35</td>
+          </tr>
+          <!-- More rows dynamically inserted by EJS -->
+        </tbody>
+      </table>
+    
+</body>
+<script src="/employee/scripts/index.js"></script>
+
+</html>

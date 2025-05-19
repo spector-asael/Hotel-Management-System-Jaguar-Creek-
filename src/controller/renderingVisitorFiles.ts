@@ -16,3 +16,7 @@ export const loadSignupForm = (req: Request, res: Response) => {
 export const loadSignupSuccess = (req: Request, res: Response) => {
     res.render('visitor/success/signup-success');
 }
+
+export const loadGuestHomepage = (req: Request, res: Response) => {
+    res.render('guest/homepage/homepage');
+}
