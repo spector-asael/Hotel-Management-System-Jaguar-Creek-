@@ -1,5 +1,5 @@
-import { Transaction } from "../interface/transactionInterface";
-import { HotelReservation } from "../interface/reservationInterface";
+import { Transaction } from "../interfaces/transactionInterface";
+import { HotelReservation } from "../interfaces/reservationInterface";
 
 export class TransactionClass implements Transaction {
   private transactionID: number;

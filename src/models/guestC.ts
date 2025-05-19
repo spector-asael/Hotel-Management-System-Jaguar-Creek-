@@ -1,6 +1,6 @@
 // guestC.ts
 
-import { Guest } from '../interface/guesInterface';
+import { Guest } from '../interfaces/guesInterface';
 import  pool  from "../db/config";
 
 // PostgreSQL database connection

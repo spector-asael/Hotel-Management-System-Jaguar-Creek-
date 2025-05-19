@@ -1,4 +1,4 @@
-import { HotelRoom } from "../interface/roomInterface";
+import { HotelRoom } from "../interfaces/roomInterface";
 
 export class HotelRoomClass implements HotelRoom {
   private roomID: number;

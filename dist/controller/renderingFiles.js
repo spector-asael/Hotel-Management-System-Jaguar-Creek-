@@ -6,6 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadLoginForm = void 0;
 const path_1 = __importDefault(require("path"));
 const loadLoginForm = (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, '../public/index.html'));
+    res.sendFile(path_1.default.join(__dirname, '../public/login/login.html'));
 };
 exports.loadLoginForm = loadLoginForm;

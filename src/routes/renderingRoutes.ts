@@ -1,8 +1,12 @@
-import { loadLoginForm } from '../controller/renderingFiles.js';
+import { loadHomePage, loadLoginForm, loadSignupForm } from '../controller/renderingVisitorFiles.js';
 import express from 'express';
 
-const renderingFilesRouter = express();
+const renderingVisitorFilesRouter = express.Router();
 
-renderingFilesRouter.get('/login', loadLoginForm);
+renderingVisitorFilesRouter.get('/login', loadLoginForm);
 
-export default renderingFilesRouter;
+renderingVisitorFilesRouter.get('/homepage', loadHomePage);
+
+renderingVisitorFilesRouter.get('/signup', loadSignupForm);
+
+export default renderingVisitorFilesRouter;
