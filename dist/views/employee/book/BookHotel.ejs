@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/employee/css/employee.css">
+    <title>Book Hotel</title>
+</head>
+<body>
+    <%- include('../partials/menu') %>
+    <div class="form">
+        <div class="wrapper">
+    <form action="#">
+        <div class="guest-name">
+            <input type="text" id="guest-name" name="guest-name" placeholder="Guest Name" required>
+        </div>
+        <div class="phone-number">
+            <input type="text" id="phone-number" name="phone-number" placeholder="Phone Number" required>
+        </div>
+        <div class="check-in">
+            <label for="check-in">Check-in</label>
+            <input type="date" id="check-in" name="check-in" required>
+        </div>
+        <div class="check-out">
+            <label for="check-out">Check-out</label>
+            <input type="date" id="check-out" name="check-out" required>
+        </div>
+        <div class="hotel">
+            <label for="hotel">Hotel</label>
+            <select id="hotel" name="hotel" required>
+                <option value="Hotel A">Hotel A</option>
+                <option value="Hotel B">Hotel B</option>
+                <option value="Hotel C">Hotel C</option>
+            </select>
+        </div>
+        <div class="room-type">
+            <label for="room-type">Room Type</label>
+            <select id="room-type" name="room-type" required>
+                <option value="Single">Single</option>
+                <option value="Double">Double</option>
+                <option value="Suite">Suite</option>
+            </select>
+        </div>
+        <div class="btn">
+            <button type="submit" class="btn">Book</button>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+<script src="/employee/script/index.js"></script>
+
+</html>

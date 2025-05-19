@@ -15,7 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.signupGuest = signupGuest;
 exports.loginUser = loginUser;
 exports.loginGuest = loginGuest;
+exports.loginEmployee = loginEmployee;
+exports.loginAdmin = loginAdmin;
 const guest_1 = __importDefault(require("../models/guest"));
+const admin_1 = require("../models/admin");
+const employee_1 = __importDefault(require("../models/employee"));
 const user_1 = __importDefault(require("../models/user"));
 function signupGuest(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -51,6 +55,23 @@ function loginUser(req, res) {
                 if (!success) {
                     res.status(401).send('Invalid credentials for guest.');
                 }
+                res.redirect('/guest');
+                return;
+            }
+            if (role === 1) {
+                const success = yield loginEmployee(username, password, req, res);
+                if (!success) {
+                    res.status(401).send('Invalid credentials for employee.');
+                }
+                res.redirect('/employee');
+                return;
+            }
+            if (role === 2) {
+                const success = yield loginAdmin(username, password, req, res);
+                if (!success) {
+                    res.status(401).send('Invalid credentials for admin.');
+                }
+                res.redirect('/admin');
                 return;
             }
             // Employee/Admin login
@@ -69,15 +90,6 @@ function loginUser(req, res) {
             };
             */
             // Redirect based on role
-            if (role === 1) {
-                res.redirect('/employee');
-            }
-            else if (role === 2) {
-                res.redirect('/admin');
-            }
-            else {
-                res.redirect('/visitor/login');
-            }
         }
         catch (err) {
             console.error('Login error:', err);
@@ -101,11 +113,60 @@ function loginGuest(username, password, req, res) {
                 username: guest.getUsername(),
                 role: 0,
             };
-            res.redirect('/');
             return true;
         }
         catch (err) {
             console.error('Guest login error:', err);
+            res.status(500).send('Server error.');
+            return false;
+        }
+    });
+}
+function loginEmployee(username, password, req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const employee = yield employee_1.default.findByUsername(username);
+            if (!employee) {
+                return false;
+            }
+            const valid = employee.validatePassword(username, password);
+            if (!valid) {
+                return false;
+            }
+            req.session.user = {
+                id: employee.getUserId(),
+                username: employee.getUsername(),
+                role: 1,
+            };
+            return true;
+        }
+        catch (err) {
+            console.error('Employee login error:', err);
+            res.status(500).send('Server error.');
+            return false;
+        }
+    });
+}
+function loginAdmin(username, password, req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const admin = yield admin_1.Admin.findByUsername(username);
+            if (!admin) {
+                return false;
+            }
+            const valid = admin.validatePassword(username, password);
+            if (!valid) {
+                return false;
+            }
+            req.session.user = {
+                id: admin.getUserId(),
+                username: admin.getUsername(),
+                role: 2,
+            };
+            return true;
+        }
+        catch (err) {
+            console.error('Admin login error:', err);
             res.status(500).send('Server error.');
             return false;
         }

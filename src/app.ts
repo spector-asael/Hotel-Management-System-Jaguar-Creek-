@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
-import renderingVisitorFilesRouter from './routes/renderingRoutes';
+import renderingVisitorFilesRouter from './routes/renderingVisitorRoutes';
+import renderingEmployeeFilesRouter from './routes/rendinergEmployeeRoutes';
 import apiRouter from './routes/apiRoutes';
 import session from 'express-session';
 import { authGuard } from './auth/authMiddleware';
@@ -27,10 +28,14 @@ app.use(session({
     saveUninitialized: false,        // don't create session until something is stored
     cookie: { secure: false }        // set to true if using HTTPS
   }));
+
 app.use(authGuard);
+
 app.get('/', (req, res) => {
     res.redirect('/visitor/homepage');
 });
+
+app.use('/employee', (renderingEmployeeFilesRouter));
 app.use('/visitor', (renderingVisitorFilesRouter));
 app.use('/api/guest', (apiRouter));
 

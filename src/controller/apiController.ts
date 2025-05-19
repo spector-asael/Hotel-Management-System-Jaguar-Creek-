@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import Guest from '../models/guest';
+import { Admin } from '../models/admin';
+import Employee from '../models/employee';
 import User from '../models/user';
 
 export async function signupGuest(req: Request, res: Response): Promise<void> {
@@ -56,8 +58,32 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
       if (!success) {
         res.status(401).send('Invalid credentials for guest.');
       }
+
+        res.redirect('/guest');
+    
       return;
     }
+
+    if (role === 1) {
+      const success = await loginEmployee(username, password, req, res);
+      if (!success) {
+        res.status(401).send('Invalid credentials for employee.');
+      }
+
+        res.redirect('/employee');
+      return;
+    }
+
+    if (role === 2) {
+      const success = await loginAdmin(username, password, req, res);
+      if (!success) {
+        res.status(401).send('Invalid credentials for admin.');
+      }
+
+        res.redirect('/admin');
+      return;
+    }
+
 
     // Employee/Admin login
     /*
@@ -75,13 +101,8 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
     };
     */
     // Redirect based on role
-    if (role === 1) {
-      res.redirect('/employee');
-    } else if (role === 2) {
-      res.redirect('/admin');
-    } else {
-      res.redirect('/visitor/login');
-    }
+    
+     
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).send('Internal server error.');
@@ -114,10 +135,77 @@ export async function loginGuest(
       role: 0,
     };
 
-    res.redirect('/');
     return true;
+
   } catch (err) {
     console.error('Guest login error:', err);
+    res.status(500).send('Server error.');
+    return false;
+  }
+
+}
+
+export async function loginEmployee(
+  username: string,
+  password: string,
+  req: Request,
+  res: Response
+): Promise<boolean> {
+  try {
+    const employee = await Employee.findByUsername(username);
+    
+    if (!employee) {
+      return false;
+    }
+
+    const valid = employee.validatePassword(username, password);
+    if (!valid) {
+      return false;
+    }
+
+    req.session.user = {
+      id: employee.getUserId(),
+      username: employee.getUsername(),
+      role: 1,
+    };
+
+    return true;
+
+  } catch (err) {
+    console.error('Employee login error:', err);
+    res.status(500).send('Server error.');
+    return false;
+  }
+}
+
+export async function loginAdmin(
+  username: string,
+  password: string,
+  req: Request,
+  res: Response
+): Promise<boolean> {
+  try {
+    const admin = await Admin.findByUsername(username);
+    
+    if (!admin) {
+      return false;
+    }
+
+    const valid = admin.validatePassword(username, password);
+    if (!valid) {
+      return false;
+    }
+
+    req.session.user = {
+      id: admin.getUserId(),
+      username: admin.getUsername(),
+      role: 2,
+    };
+
+    return true;
+
+  } catch (err) {
+    console.error('Admin login error:', err);
     res.status(500).send('Server error.');
     return false;
   }
