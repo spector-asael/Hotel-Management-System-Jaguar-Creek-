@@ -1,9 +1,9 @@
 import express from 'express';
 import path from 'path';
 import renderingVisitorFilesRouter from './routes/renderingRoutes';
+import apiRouter from './routes/apiRoutes';
 import session from 'express-session';
-
-import { requireLogin } from './auth/authMiddleware'; // adjust path if needed
+import { authGuard } from './auth/authMiddleware';
 
 const app = express();
 
@@ -27,8 +27,12 @@ app.use(session({
     saveUninitialized: false,        // don't create session until something is stored
     cookie: { secure: false }        // set to true if using HTTPS
   }));
-app.use(requireLogin);
+app.use(authGuard);
+app.get('/', (req, res) => {
+    res.redirect('/visitor/homepage');
+});
 app.use('/visitor', (renderingVisitorFilesRouter));
+app.use('/api/guest', (apiRouter));
 
 app.use((req, res) => {
     res.status(404).send("Error");

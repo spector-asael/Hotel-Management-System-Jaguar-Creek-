@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadSignupForm = exports.loadHomePage = exports.loadLoginForm = void 0;
+exports.loadSignupSuccess = exports.loadSignupForm = exports.loadHomePage = exports.loadLoginForm = void 0;
 const loadLoginForm = (req, res) => {
     res.render('visitor/login/login');
 };
@@ -13,3 +13,7 @@ const loadSignupForm = (req, res) => {
     res.render('visitor/signup/signup');
 };
 exports.loadSignupForm = loadSignupForm;
+const loadSignupSuccess = (req, res) => {
+    res.render('visitor/success/signup-success');
+};
+exports.loadSignupSuccess = loadSignupSuccess;

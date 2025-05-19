@@ -1,35 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.requireLogin = requireLogin;
-exports.requireRole = requireRole;
-// Public paths anyone can access
-const publicPaths = ['/visitor', '/global-styles', '/assets'];
-function requireLogin(req, res, next) {
-    const cleanPath = req.path.replace(/\/$/, ''); // remove trailing slash
-    console.log('Session:', req.session);
-    console.log('Path:', req.path);
-    const isPublic = publicPaths.some((publicPath) => cleanPath.startsWith(publicPath));
-    if (isPublic) {
+exports.authGuard = authGuard;
+const accessControl = {
+    '/guest': 0,
+    '/employee': 1,
+    '/admin': 2,
+};
+function authGuard(req, res, next) {
+    const path = req.path.replace(/\/$/, ''); // normalize by removing trailing slash
+    // Allow all users to access anything under /visitor
+    if (path.startsWith('/visitor')) {
         return next();
     }
-    if (!req.session.user) {
-        return res.redirect('/visitor/login');
+    // Check if the route matches a protected route
+    for (const [prefix, minRole] of Object.entries(accessControl)) {
+        if (path.startsWith(prefix)) {
+            const user = req.session.user;
+            if (!user) {
+                return res.redirect('/visitor/login');
+            }
+            if (user.role < minRole) {
+                return res.redirect('/visitor/login');
+            }
+            return next(); // Authorized
+        }
     }
-    next();
-}
-// Role-based access middleware
-function requireRole(minRole) {
-    return function (req, res, next) {
-        if (!req.session.user) {
-            return res.redirect('/visitor/login');
-        }
-        const userRole = req.session.user.role;
-        if (userRole === undefined) {
-            return res.status(403).send('Forbidden: role not defined');
-        }
-        if (userRole < minRole) {
-            return res.status(403).send('Forbidden: insufficient permissions');
-        }
-        next();
-    };
+    // Default fallback if route doesn't match anything
+    return next();
 }

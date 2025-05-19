@@ -13,3 +13,6 @@ export const loadSignupForm = (req: Request, res: Response) => {
     res.render('visitor/signup/signup');
 }
 
+export const loadSignupSuccess = (req: Request, res: Response) => {
+    res.render('visitor/success/signup-success');
+}
