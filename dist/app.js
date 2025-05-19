@@ -6,8 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const renderingRoutes_1 = __importDefault(require("./routes/renderingRoutes"));
+const apiRoutes_1 = __importDefault(require("./routes/apiRoutes"));
 const express_session_1 = __importDefault(require("express-session"));
-const authMiddleware_1 = require("./auth/authMiddleware"); // adjust path if needed
+const authMiddleware_1 = require("./auth/authMiddleware");
 const app = (0, express_1.default)();
 app.set('view engine', 'ejs'); // tells Express to use EJS
 console.log("DIRNAME:", __dirname);
@@ -27,8 +28,12 @@ app.use((0, express_session_1.default)({
     saveUninitialized: false, // don't create session until something is stored
     cookie: { secure: false } // set to true if using HTTPS
 }));
-app.use(authMiddleware_1.requireLogin);
+app.use(authMiddleware_1.authGuard);
+app.get('/', (req, res) => {
+    res.redirect('/visitor/homepage');
+});
 app.use('/visitor', (renderingRoutes_1.default));
+app.use('/api/guest', (apiRoutes_1.default));
 app.use((req, res) => {
     res.status(404).send("Error");
 });

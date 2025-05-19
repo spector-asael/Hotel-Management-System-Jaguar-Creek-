@@ -1,0 +1,7 @@
+CREATE DATABASE hotel;
+CREATE USER hotel WITH PASSWORD 'password';
+\c hotel;
+ALTER DATABASE hotel OWNER TO hotel;
+GRANT ALL PRIVILEGES ON DATABASE hotel TO hotel;
+
+

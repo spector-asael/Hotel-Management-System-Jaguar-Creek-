@@ -1,0 +1,93 @@
+/* styles.css */
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f2f4f8;
+    
+  }
+  
+  /* Create a wrapper to center the form */
+  .signup-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* leave space for nav-bar */
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  
+  .signup {
+    background-color: #ffffff;
+    padding: 2rem;
+    padding-right: 4em;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+  }
+  
+  button[type="submit"] {
+    background-color: #1a3e2e;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button[type="submit"]:hover {
+    background-color: #14502d;
+  }
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .heading-section {
+    text-align: center;
+    color: #1a3e2e;
+    margin-bottom: 0.5rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1.5rem;
+    color: #444;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #1a3e2e;
+    outline: none;
+  }
+  
+  .field-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+  }
+  
+  @media (max-width: 480px) {
+    .signup {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  }
+  

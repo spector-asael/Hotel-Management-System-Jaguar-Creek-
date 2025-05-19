@@ -16,8 +16,6 @@
 
 }
 
-
-
 .nav-list {
     grid-column: 3;
     display: flex;
@@ -25,13 +23,7 @@
     align-items: flex-start;
 
 }
-.nav-bar::before,
-.nav-bar::after,
-.nav-bar *::before,
-.nav-bar *::after {
-  -webkit-box-sizing: initial; /* or initial/unset depending on what you want */
-  box-sizing: initial;
-}
+
 
 .nav-list a {
     text-decoration: none;
