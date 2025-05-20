@@ -1,17 +1,24 @@
-export const loadEmployeeBook = (req: any, res: any) => {
-    res.render('employee/book/BookHotel');
+import HotelRoom from "../models/hotelroom";
+
+export const loadEmployeeBook = async (req: any, res: any) => {
+    let hotelRooms = await HotelRoom.getAllRooms();
+    res.render('employee/book/BookHotel', {hotelRooms});
 }
 
 export const loadEmployeeGuest = (req: any, res: any) => {
-    res.render('employee/guest/guest');
+    let hotelRooms = HotelRoom.getAllRooms();
+    res.render('employee/guest/guest', {hotelRooms});
 }
 
 export const loadEmployeeHotel = (req: any, res: any) => {
-    res.render('employee/hotel/hotel');
+    let hotelRooms = HotelRoom.getAllRooms();
+    res.render('employee/hotel/hotel', {hotelRooms});
 }
 export const loadEmployeeRoom = (req: any, res: any) => {
-    res.render('employee/room/room');
+    let hotelRooms = HotelRoom.getAllRooms();
+    res.render('employee/room/room',{hotelRooms});
 }
 export const loadEmployeeTransaction = (req: any, res: any) => {
-    res.render('employee/transaction/transaction');
+    let hotelRooms = HotelRoom.getAllRooms();
+    res.render('employee/transaction/transaction', {hotelRooms});
 }

@@ -9,7 +9,7 @@ const renderingVisitorRoutes_1 = __importDefault(require("./routes/renderingVisi
 const rendinergEmployeeRoutes_1 = __importDefault(require("./routes/rendinergEmployeeRoutes"));
 const apiRoutes_1 = __importDefault(require("./routes/apiRoutes"));
 const express_session_1 = __importDefault(require("express-session"));
-const authMiddleware_1 = require("./auth/authMiddleware");
+const authMiddleware_1 = require("./middleware/authMiddleware");
 const app = (0, express_1.default)();
 app.set('view engine', 'ejs'); // tells Express to use EJS
 console.log("DIRNAME:", __dirname);
@@ -30,12 +30,13 @@ app.use((0, express_session_1.default)({
     cookie: { secure: false } // set to true if using HTTPS
 }));
 app.use(authMiddleware_1.authGuard);
+app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
 app.get('/', (req, res) => {
     res.redirect('/visitor/homepage');
 });
 app.use('/employee', (rendinergEmployeeRoutes_1.default));
 app.use('/visitor', (renderingVisitorRoutes_1.default));
-app.use('/api/guest', (apiRoutes_1.default));
+app.use('/api/', (apiRoutes_1.default));
 app.use((req, res) => {
     res.status(404).send("Error");
 });

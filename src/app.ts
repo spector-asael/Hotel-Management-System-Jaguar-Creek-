@@ -4,7 +4,7 @@ import renderingVisitorFilesRouter from './routes/renderingVisitorRoutes';
 import renderingEmployeeFilesRouter from './routes/rendinergEmployeeRoutes';
 import apiRouter from './routes/apiRoutes';
 import session from 'express-session';
-import { authGuard } from './auth/authMiddleware';
+import { authGuard } from './middleware/authMiddleware';
 
 const app = express();
 
@@ -30,14 +30,14 @@ app.use(session({
   }));
 
 app.use(authGuard);
-
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.get('/', (req, res) => {
     res.redirect('/visitor/homepage');
 });
 
 app.use('/employee', (renderingEmployeeFilesRouter));
 app.use('/visitor', (renderingVisitorFilesRouter));
-app.use('/api/guest', (apiRouter));
+app.use('/api/', (apiRouter));
 
 app.use((req, res) => {
     res.status(404).send("Error");

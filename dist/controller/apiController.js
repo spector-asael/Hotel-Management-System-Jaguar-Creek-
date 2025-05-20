@@ -12,15 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.logout = void 0;
 exports.signupGuest = signupGuest;
 exports.loginUser = loginUser;
 exports.loginGuest = loginGuest;
 exports.loginEmployee = loginEmployee;
 exports.loginAdmin = loginAdmin;
 const guest_1 = __importDefault(require("../models/guest"));
+const user_1 = __importDefault(require("../models/user"));
 const admin_1 = require("../models/admin");
 const employee_1 = __importDefault(require("../models/employee"));
-const user_1 = __importDefault(require("../models/user"));
+const logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send('Failed to log out');
+        }
+        // Clear the cookie (optional but recommended)
+        res.clearCookie('connect.sid'); // or whatever your session cookie is named
+        // Redirect to login or home page
+        res.redirect('/');
+    });
+};
+exports.logout = logout;
 function signupGuest(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { firstname, lastname, email, username, password, confirmpassword, phone, } = req.body;
@@ -74,22 +88,6 @@ function loginUser(req, res) {
                 res.redirect('/admin');
                 return;
             }
-            // Employee/Admin login
-            /*
-            const user = await User.findByUsername(username);
-            if (!user || !user.validatePassword(password)) {
-              res.status(401).send('Invalid credentials.');
-              return;
-            }
-            
-            // Save session
-            req.session.user = {
-              id: user.id,
-              username: user.username,
-              role: role,
-            };
-            */
-            // Redirect based on role
         }
         catch (err) {
             console.error('Login error:', err);

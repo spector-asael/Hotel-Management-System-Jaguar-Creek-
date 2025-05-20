@@ -2,10 +2,12 @@
     <div>
         <h1>Welcome employee!</h1>
     </div>
-    <a href="/employee/dashboard/book" class="menu-btn">Book</a>
+    <a href="/employee/dashboard/book" class="menu-btn">Book New User</a>
+    <a href="/employee/dashboard/hotel" class="menu-btn">Book User</a>
     <a href="/employee/dashboard/hotel" class="menu-btn">Hotel</a>
     <a href="/employee/dashboard/guest" class="menu-btn">Guest</a>
-    <a href="/employee/dashboard/room" class="menu-btn">Room</a>
     <a href="/employee/dashboard/transaction" class="menu-btn">Transaction</a>
-    <a href="/employee/logout" class="menu-btn">Logout</a>
+    <form action="/api/logout" method="POST" style="display:inline;">
+        <button type="submit" class="menu-btn">Logout</button>
+    </form>
 </div>
