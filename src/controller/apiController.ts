@@ -1,8 +1,26 @@
 import { Request, Response } from 'express';
 import Guest from '../models/guest';
+import User from '../models/user';
 import { Admin } from '../models/admin';
 import Employee from '../models/employee';
-import User from '../models/user';
+import Reservation from '../models/reservations';
+import HotelRoom from '../models/hotelroom';
+
+
+export const logout = (req: Request, res: Response) => {
+  req.session.destroy((err) => {
+      if (err) {
+          console.error('Error destroying session:', err);
+          return res.status(500).send('Failed to log out');
+      }
+
+      // Clear the cookie (optional but recommended)
+      res.clearCookie('connect.sid'); // or whatever your session cookie is named
+
+      // Redirect to login or home page
+      res.redirect('/');
+  });
+};
 
 export async function signupGuest(req: Request, res: Response): Promise<void> {
   const {
@@ -83,25 +101,6 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
         res.redirect('/admin');
       return;
     }
-
-
-    // Employee/Admin login
-    /*
-    const user = await User.findByUsername(username);
-    if (!user || !user.validatePassword(password)) {
-      res.status(401).send('Invalid credentials.');
-      return;
-    }
-    
-    // Save session
-    req.session.user = {
-      id: user.id,
-      username: user.username,
-      role: role,
-    };
-    */
-    // Redirect based on role
-    
      
   } catch (err) {
     console.error('Login error:', err);
