@@ -1,5 +1,5 @@
 import express from 'express';
-import { loadEmployeeBook, loadEmployeeGuest, loadEmployeeHotel, loadEmployeeRoom, loadEmployeeTransaction } from '../controller/renderingEmployeeFiles';
+import { loadEmployeeBook, loadEmployeeBooking, loadEmployeeGuest, loadEmployeeHotel, loadEmployeeRoom, loadEmployeeTransaction, searchGuestById, searchGuestByUsername } from '../controller/renderingEmployeeFiles';
 
 const renderingEmployeeFilesRouter = express.Router();
 
@@ -8,9 +8,12 @@ renderingEmployeeFilesRouter.get('/', (req, res) => {
 });
 
 renderingEmployeeFilesRouter.get('/dashboard/book', loadEmployeeBook);
+renderingEmployeeFilesRouter.get('/dashboard/booking', loadEmployeeBooking)
 renderingEmployeeFilesRouter.get('/dashboard/guest', loadEmployeeGuest);
 renderingEmployeeFilesRouter.get('/dashboard/hotel', loadEmployeeHotel);
 renderingEmployeeFilesRouter.get('/dashboard/room', loadEmployeeRoom);
 renderingEmployeeFilesRouter.get('/dashboard/transaction', loadEmployeeTransaction);
+renderingEmployeeFilesRouter.post('/guest/id', searchGuestById);
+renderingEmployeeFilesRouter.post('/guest/username', searchGuestByUsername);
 
 export default renderingEmployeeFilesRouter;

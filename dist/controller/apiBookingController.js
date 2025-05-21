@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bookHotelNew = void 0;
+exports.bookHotelExisting = exports.bookHotelNew = void 0;
 const guest_1 = __importDefault(require("../models/guest")); // Adjust import path as needed
 const reservations_1 = __importDefault(require("../models/reservations")); // Adjust import path as needed
 const bookHotelNew = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,7 +22,7 @@ const bookHotelNew = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         // Validate date input
         const start = new Date(checkIn);
         const end = new Date(checkOut);
-        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) {
             return res.render('employee/book/success', {
                 message: "Invalid check-in/check-out dates."
             });
@@ -52,3 +52,52 @@ const bookHotelNew = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.bookHotelNew = bookHotelNew;
+const bookHotelExisting = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, "user-id": userId, // assumed to be social_security_id
+        "check-in": checkIn, "check-out": checkOut, hotel // room_id
+         } = req.body;
+        // Basic presence validation
+        if (!username && !userId) {
+            return res.render('employee/book/success', {
+                message: "Missing user identifier. Please provide a username or user ID."
+            });
+        }
+        // Validate dates
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+            return res.render('employee/book/success', {
+                message: "Invalid check-in/check-out dates."
+            });
+        }
+        // Find the existing guest
+        let guest;
+        if (username) {
+            guest = yield guest_1.default.findByUsername(username);
+        }
+        else {
+            guest = yield guest_1.default.findByID(userId);
+        }
+        if (!guest) {
+            return res.render('employee/book/success', {
+                message: "Guest not found. Please ensure you're using the correct username or user ID."
+            });
+        }
+        // Create reservation
+        const reservation = new reservations_1.default(0, // reservation_id (auto-generated)
+        guest.getUserId(), // assuming this is how it's stored
+        hotel, start, end);
+        yield reservation.addReservation();
+        res.render('employee/book/success', {
+            message: "Booking successful"
+        });
+    }
+    catch (err) {
+        console.error("Booking error (existing user):", err);
+        res.render('employee/book/success', {
+            message: "Server error while booking"
+        });
+    }
+});
+exports.bookHotelExisting = bookHotelExisting;

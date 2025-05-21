@@ -8,26 +8,26 @@
 </head>
 <body>
     <%- include('../partials/menu') %>
+
     <table class="hotel-table">
         <thead>
           <tr>
-            <th>Name of Hotel</th>
-            <th>Number of Rooms</th>
-            <th>Number of Available Rooms</th>
+            <th>Room Name</th>
+            <th>Capacity</th>
+            <th> View </th>
           </tr>
         </thead>
         <tbody>
-          <!-- Example row -->
-          <tr>
-            <td>Ocean Breeze Hotel</td>
-            <td>120</td>
-            <td>35</td>
-          </tr>
-          <!-- More rows dynamically inserted by EJS -->
+          <% hotels.forEach(hotel => { %>
+            <tr>
+              <td><%= hotel.room_name %></td>
+              <td><%= hotel.room_capacity %></td>
+              <td> <a href="room/<%= hotel.room_id %>"> <button> <%= hotel.room_id %> </button> </a> </td>
+            </tr>
+          <% }) %>
         </tbody>
-      </table>
+    </table>
     
 </body>
 <script src="/employee/scripts/index.js"></script>
-
 </html>

@@ -56,6 +56,31 @@ class Guest extends GuestInterface {
             throw err;
         }
     }
+
+    static async findByID(user_id: string): Promise<Guest | null> {
+        const query = 'SELECT * FROM users WHERE user_id = $1';
+        const values = [user_id];
+
+        try {
+            const result = await pool.query(query, values);
+            if (result.rows.length === 0) return null;
+
+            const row = result.rows[0];
+            return new Guest(
+                row.user_id,
+                row.user_first_name,
+                row.user_last_name,
+                row.user_phone_number,
+                row.username,
+                row.user_password,
+                row.user_email
+            );
+
+        } catch (err) {
+            console.error('Error finding guest:', err);
+            throw err;
+        }
+    }
 }
 
 export default Guest;

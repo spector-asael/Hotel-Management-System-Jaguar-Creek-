@@ -53,5 +53,22 @@ class Guest extends guestInterface_1.default {
             }
         });
     }
+    static findByID(user_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = 'SELECT * FROM users WHERE user_id = $1';
+            const values = [user_id];
+            try {
+                const result = yield config_1.default.query(query, values);
+                if (result.rows.length === 0)
+                    return null;
+                const row = result.rows[0];
+                return new Guest(row.user_id, row.user_first_name, row.user_last_name, row.user_phone_number, row.username, row.user_password, row.user_email);
+            }
+            catch (err) {
+                console.error('Error finding guest:', err);
+                throw err;
+            }
+        });
+    }
 }
 exports.default = Guest;

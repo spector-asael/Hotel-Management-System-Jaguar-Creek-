@@ -53,6 +53,7 @@ class Reservation extends ReservationInterface {
     }
 
     public async addReservation(): Promise<void> {
+        console.log("hi");
         const query = `
             INSERT INTO reservations (
                 user_id,
@@ -107,6 +108,20 @@ class Reservation extends ReservationInterface {
             throw err;
         }
     }
+
+    public async findReservationByUserId(user_id: number) {
+        const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
+        const values = [user_id];
+    
+        try {
+            const result = await pool.query(query, values); // assuming this.db is your database instance
+            return result.rows;
+        } catch (error) {
+            console.error('Error fetching reservation by user ID:', error);
+            throw error;
+        }
+    }
+    
 }
 
 export default Reservation;

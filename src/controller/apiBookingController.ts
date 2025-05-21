@@ -22,7 +22,7 @@ export const bookHotelNew = async (req: Request, res: Response) => {
         const start = new Date(checkIn);
         const end = new Date(checkOut);
 
-        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) {
             return res.render('employee/book/success', {
                 message: "Invalid check-in/check-out dates."
             });
@@ -65,6 +65,69 @@ export const bookHotelNew = async (req: Request, res: Response) => {
 
     } catch (err) {
         console.error("Booking error:", err);
+        res.render('employee/book/success', {
+            message: "Server error while booking"
+        });
+    }
+};
+
+export const bookHotelExisting = async (req: Request, res: Response) => {
+    try {
+        const {
+            username,
+            "user-id": userId,       // assumed to be social_security_id
+            "check-in": checkIn,
+            "check-out": checkOut,
+            hotel                    // room_id
+        } = req.body;
+
+        // Basic presence validation
+        if (!username && !userId) {
+            return res.render('employee/book/success', {
+                message: "Missing user identifier. Please provide a username or user ID."
+            });
+        }
+
+        // Validate dates
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+            return res.render('employee/book/success', {
+                message: "Invalid check-in/check-out dates."
+            });
+        }
+
+        // Find the existing guest
+        let guest;
+        if (username) {
+            guest = await Guest.findByUsername(username);
+        } else {
+            guest = await Guest.findByID(userId);
+        }
+
+        if (!guest) {
+            return res.render('employee/book/success', {
+                message: "Guest not found. Please ensure you're using the correct username or user ID."
+            });
+        }
+
+        // Create reservation
+        const reservation = new Reservation(
+            0, // reservation_id (auto-generated)
+            guest.getUserId(), // assuming this is how it's stored
+            hotel,
+            start,
+            end
+        );
+
+        await reservation.addReservation();
+
+        res.render('employee/book/success', {
+            message: "Booking successful"
+        });
+
+    } catch (err) {
+        console.error("Booking error (existing user):", err);
         res.render('employee/book/success', {
             message: "Server error while booking"
         });
