@@ -63,7 +63,7 @@ export async function searchGuestByUsername(req: Request, res: Response) {
     try {
     const user = await Guest.findByID(id);
     
-    const reservations = await Reservation.findReservationsByUserId(id);
+    const reservations = await Reservation.findReservationByUserId(id);
     if(!reservations) {
         throw new Error("No reservations found for this user");
     }

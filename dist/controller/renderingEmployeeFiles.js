@@ -15,8 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadEmployeeTransaction = exports.loadEmployeeRoom = exports.loadEmployeeHotel = exports.loadEmployeeGuest = exports.loadEmployeeBooking = exports.loadEmployeeBook = void 0;
 exports.searchGuestByUsername = searchGuestByUsername;
 exports.searchGuestById = searchGuestById;
+exports.loadUserReservation = loadUserReservation;
 const hotelroom_1 = __importDefault(require("../models/hotelroom"));
 const guest_1 = __importDefault(require("../models/guest"));
+const reservations_1 = __importDefault(require("../models/reservations"));
 const loadEmployeeBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let hotelRooms = yield hotelroom_1.default.getAllRooms();
     res.render('employee/book/BookHotel', { hotelRooms });
@@ -67,5 +69,21 @@ function searchGuestById(req, res) {
             return;
         }
         res.render('employee/guest/guestfound', { user });
+    });
+}
+function loadUserReservation(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.body;
+        try {
+            const user = yield guest_1.default.findByID(id);
+            const reservations = yield reservations_1.default.findReservationByUserId(id);
+            if (!reservations) {
+                throw new Error("No reservations found for this user");
+            }
+        }
+        catch (error) {
+            res.status(404).send(error);
+            return;
+        }
     });
 }

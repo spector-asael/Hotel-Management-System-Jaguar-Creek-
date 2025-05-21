@@ -109,7 +109,7 @@ class Reservation extends ReservationInterface {
         }
     }
 
-    public async findReservationByUserId(user_id: number) {
+    public static async findReservationByUserId(user_id: number) {
         const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
         const values = [user_id];
     
