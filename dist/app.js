@@ -27,7 +27,7 @@ app.use((0, express_session_1.default)({
     secret: 'keyboard cat', // used to sign the session ID cookie
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something is stored
-    cookie: { secure: false } // set to true if using HTTPS
+    cookie: { secure: false }
 }));
 app.use(authMiddleware_1.authGuard);
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));

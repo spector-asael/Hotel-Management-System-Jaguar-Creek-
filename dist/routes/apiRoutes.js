@@ -11,4 +11,5 @@ apiRouter.post("/guest/signup", apiController_1.signupGuest);
 apiRouter.post("/login", apiController_1.loginUser);
 apiRouter.post("/logout", apiController_1.logout);
 apiRouter.post("/employee/book", apiBookingController_1.bookHotelNew);
+apiRouter.post("/employee/booking", apiBookingController_1.bookHotelExisting);
 exports.default = apiRouter;

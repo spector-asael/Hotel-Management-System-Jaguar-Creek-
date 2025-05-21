@@ -10,8 +10,11 @@ renderingEmployeeFilesRouter.get('/', (req, res) => {
     res.redirect('/employee/dashboard/book');
 });
 renderingEmployeeFilesRouter.get('/dashboard/book', renderingEmployeeFiles_1.loadEmployeeBook);
+renderingEmployeeFilesRouter.get('/dashboard/booking', renderingEmployeeFiles_1.loadEmployeeBooking);
 renderingEmployeeFilesRouter.get('/dashboard/guest', renderingEmployeeFiles_1.loadEmployeeGuest);
 renderingEmployeeFilesRouter.get('/dashboard/hotel', renderingEmployeeFiles_1.loadEmployeeHotel);
 renderingEmployeeFilesRouter.get('/dashboard/room', renderingEmployeeFiles_1.loadEmployeeRoom);
 renderingEmployeeFilesRouter.get('/dashboard/transaction', renderingEmployeeFiles_1.loadEmployeeTransaction);
+renderingEmployeeFilesRouter.post('/guest/id', renderingEmployeeFiles_1.searchGuestById);
+renderingEmployeeFilesRouter.post('/guest/username', renderingEmployeeFiles_1.searchGuestByUsername);
 exports.default = renderingEmployeeFilesRouter;

@@ -26,7 +26,7 @@ app.use(session({
     secret: 'keyboard cat',          // used to sign the session ID cookie
     resave: false,                   // don't save session if unmodified
     saveUninitialized: false,        // don't create session until something is stored
-    cookie: { secure: false }        // set to true if using HTTPS
+    cookie: { secure: false }       
   }));
 
 app.use(authGuard);

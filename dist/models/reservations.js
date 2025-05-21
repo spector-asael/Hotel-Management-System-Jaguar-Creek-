@@ -50,6 +50,7 @@ class Reservation extends reservationInterface_1.default {
     }
     addReservation() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("hi");
             const query = `
             INSERT INTO reservations (
                 user_id,
@@ -92,6 +93,20 @@ class Reservation extends reservationInterface_1.default {
             catch (err) {
                 console.error('Error fetching reservations by user ID:', err);
                 throw err;
+            }
+        });
+    }
+    static findReservationByUserId(user_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
+            const values = [user_id];
+            try {
+                const result = yield config_1.default.query(query, values); // assuming this.db is your database instance
+                return result.rows;
+            }
+            catch (error) {
+                console.error('Error fetching reservation by user ID:', error);
+                throw error;
             }
         });
     }
