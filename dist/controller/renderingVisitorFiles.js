@@ -36,7 +36,7 @@ exports.loadAboutPage = loadAboutPage;
 const loadVisitorRooms = (req, res) => {
     const user = req.session.user;
     if (!user) {
-        res.send("Hello, world!");
+        res.render("guest/rooms/rooms");
     }
     else if (user.role == 0) {
         res.redirect('/guest/rooms');

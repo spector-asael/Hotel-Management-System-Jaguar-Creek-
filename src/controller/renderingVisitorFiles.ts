@@ -36,7 +36,7 @@ export const loadVisitorRooms = (req: Request, res: Response) => {
     const user = req.session.user as { role: number } | undefined;
 
     if(!user){
-        res.send("Hello, world!")
+        res.render("guest/rooms/rooms")
     } else if(user.role == 0){
         res.redirect('/guest/rooms');
     }
