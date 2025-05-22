@@ -108,12 +108,7 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function loginGuest(
-  username: string,
-  password: string,
-  req: Request,
-  res: Response
-): Promise<boolean> {
+export async function loginGuest(username: string, password: string, req: Request, res: Response): Promise<boolean> {
 
   try {
     const guest = await Guest.findByUsername(username);
@@ -158,7 +153,7 @@ export async function loginEmployee(
     }
 
     const valid = employee.validatePassword(username, password);
-    if (!valid) {
+    if (valid == -1) {
       return false;
     }
 
@@ -191,7 +186,7 @@ export async function loginAdmin(
     }
 
     const valid = admin.validatePassword(username, password);
-    if (!valid) {
+    if (valid == -1) {
       return false;
     }
 

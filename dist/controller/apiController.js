@@ -128,7 +128,7 @@ function loginEmployee(username, password, req, res) {
                 return false;
             }
             const valid = employee.validatePassword(username, password);
-            if (!valid) {
+            if (valid == -1) {
                 return false;
             }
             req.session.user = {
@@ -153,7 +153,7 @@ function loginAdmin(username, password, req, res) {
                 return false;
             }
             const valid = admin.validatePassword(username, password);
-            if (!valid) {
+            if (valid == -1) {
                 return false;
             }
             req.session.user = {

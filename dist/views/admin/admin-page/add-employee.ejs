@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin/admin.css">  
+    <title>Add-Employee</title>
+</head>
+<body>
+    <%- include('../partials/adminmenu') %>
+
+    <div class="form">
+        <div class="wrapper">
+            <form action="/api/admin/add/user" method="post">
+                <div class="guest-name">
+                    <input type="text" id="guest-name" name="first_name" placeholder="First Name" required>
+                    <input type="text" id="guest-name" name="last_name" placeholder="Last Name" required>
+                </div>
+                <div class="user-data">
+                    <input type="text" id="phone-number" name="phone_number" placeholder="Phone Number" required>
+                    <input type="text" id="phone-number" name="email" placeholder="User Email" required>
+                    <input type="text" id="social-security-id" name="social_security_id" placeholder="Social Security ID" required>
+                </div>
+                <div class="credentials">
+                    <input type="text" id="phone-number" name="username" placeholder="username" required>
+                    <input type="text" id="phone-number" name="password" placeholder="password" required>
+                </div>
+                <dropdown>
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="2">Admin</option>
+                        <option value="1">Employee</option>
+                        <option value="0"> Guest </option>
+                </select>
+                <button type="submit" id="admin-add">Add</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

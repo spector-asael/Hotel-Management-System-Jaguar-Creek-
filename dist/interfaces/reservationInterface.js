@@ -15,12 +15,3 @@ class ReservationInterface {
     }
 }
 exports.default = ReservationInterface;
-/*
-CREATE TABLE reservations (
-    reservation_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    room_id INT REFERENCES hotel_rooms(room_id) ON DELETE CASCADE,
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL
-);
-*/ 

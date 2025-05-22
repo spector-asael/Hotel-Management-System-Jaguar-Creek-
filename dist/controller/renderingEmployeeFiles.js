@@ -73,13 +73,14 @@ function searchGuestById(req, res) {
 }
 function loadUserReservation(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id } = req.body;
+        const { id } = req.params;
         try {
             const user = yield guest_1.default.findByID(id);
             const reservations = yield reservations_1.default.findReservationByUserId(id);
             if (!reservations) {
                 throw new Error("No reservations found for this user");
             }
+            res.render('employee/reservation/reservation', { reservations });
         }
         catch (error) {
             res.status(404).send(error);

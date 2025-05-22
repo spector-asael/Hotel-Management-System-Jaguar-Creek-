@@ -30,17 +30,7 @@ export default abstract class ReservationInterface {
         this.end_date = end_date;
     }
 
-    public abstract addReservation(): Promise<void>;
-    public abstract getAllReservations(): Promise<ReservationInterface[]>;
-    public abstract getReservationsByUserId(user_id: number): Promise<ReservationInterface[]>;
+    public abstract addReservation(): Promise<number>;
+    public abstract calculateTotalPrice(): Promise<number>;
 }
 
-/*
-CREATE TABLE reservations (
-    reservation_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    room_id INT REFERENCES hotel_rooms(room_id) ON DELETE CASCADE,
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL
-);
-*/

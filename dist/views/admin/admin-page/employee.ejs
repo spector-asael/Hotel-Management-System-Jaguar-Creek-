@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin/admin.css"> 
+    <title>Employees</title>
+</head>
+<body>
+    <%- include('../partials/adminmenu') %>
+   <div class="hotel-table"> 
+        <table class="hotel-table">
+            <h1> Users </h1>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>DELETE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.first_name %> <%= user.last_name %></td>
+                        <td><%= user.username %></td>
+                        <td> <form method="POST" action="/api/user/delete/<%= user.user_id %>"> 
+                            <button type="submit" style="background-color: red;"> Delete User </button>
+                        </form></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

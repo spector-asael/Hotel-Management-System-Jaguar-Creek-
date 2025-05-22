@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bookHotelExisting = exports.bookHotelNew = void 0;
 const guest_1 = __importDefault(require("../models/guest")); // Adjust import path as needed
 const reservations_1 = __importDefault(require("../models/reservations")); // Adjust import path as needed
+const transactions_1 = require("../models/transactions");
 const bookHotelNew = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { "first-name": firstName, "last-name": lastName, "phone-number": phoneNumber, email, "social-security-id": socialSecurityId, username, password, "check-in": checkIn, "check-out": checkOut, hotel, // room_id
@@ -40,6 +41,7 @@ const bookHotelNew = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const reservation = new reservations_1.default(0, // reservation_id will be auto-generated
         socialSecurityId, hotel, start, end);
         yield reservation.addReservation();
+        createTransaction(reservation);
         res.render('employee/book/success', {
             message: "Booking successful"
         });
@@ -88,7 +90,9 @@ const bookHotelExisting = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const reservation = new reservations_1.default(0, // reservation_id (auto-generated)
         guest.getUserId(), // assuming this is how it's stored
         hotel, start, end);
-        yield reservation.addReservation();
+        const reservationID = yield reservation.addReservation();
+        reservation.setReservationId(reservationID);
+        createTransaction(reservation);
         res.render('employee/book/success', {
             message: "Booking successful"
         });
@@ -101,3 +105,9 @@ const bookHotelExisting = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.bookHotelExisting = bookHotelExisting;
+const createTransaction = (reservation) => __awaiter(void 0, void 0, void 0, function* () {
+    const totalPrice = yield reservation.calculateTotalPrice();
+    const transaction = new transactions_1.Transactions(0, reservation.getReservationId(), new Date(), totalPrice, 0);
+    transaction.addTransactionToDB();
+    return;
+});

@@ -1,5 +1,5 @@
 // File: src/routes/renderingRoutes
-import { loadAboutPage, loadContactPage, loadHomePage, loadLoginForm, loadSignupForm, loadSignupSuccess, loadTeamPage } from '../controller/renderingVisitorFiles.js';
+import { loadAboutPage, loadContactPage, loadHomePage, loadLoginForm, loadSignupForm, loadSignupSuccess, loadTeamPage, loadVisitorRooms } from '../controller/renderingVisitorFiles.js';
 import express from 'express';
 
 const renderingVisitorFilesRouter = express.Router();
@@ -21,5 +21,7 @@ renderingVisitorFilesRouter.get('/team', loadTeamPage);
 renderingVisitorFilesRouter.get('/contact', loadContactPage);
 
 renderingVisitorFilesRouter.get('/about', loadAboutPage);
+
+renderingVisitorFilesRouter.get('/rooms', loadVisitorRooms);
 
 export default renderingVisitorFilesRouter;

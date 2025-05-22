@@ -7,6 +7,8 @@ const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const renderingVisitorRoutes_1 = __importDefault(require("./routes/renderingVisitorRoutes"));
 const rendinergEmployeeRoutes_1 = __importDefault(require("./routes/rendinergEmployeeRoutes"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const renderingGuestRoutes_1 = __importDefault(require("./routes/renderingGuestRoutes"));
 const apiRoutes_1 = __importDefault(require("./routes/apiRoutes"));
 const express_session_1 = __importDefault(require("express-session"));
 const authMiddleware_1 = require("./middleware/authMiddleware");
@@ -34,8 +36,10 @@ app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../
 app.get('/', (req, res) => {
     res.redirect('/visitor/homepage');
 });
+app.use('/admin', (adminRoutes_1.default));
 app.use('/employee', (rendinergEmployeeRoutes_1.default));
 app.use('/visitor', (renderingVisitorRoutes_1.default));
+app.use('/guest', renderingGuestRoutes_1.default);
 app.use('/api/', (apiRoutes_1.default));
 app.use((req, res) => {
     res.status(404).send("Error");
