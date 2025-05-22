@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import renderingVisitorFilesRouter from './routes/renderingVisitorRoutes';
 import renderingEmployeeFilesRouter from './routes/rendinergEmployeeRoutes';
+import renderingAdminFilesRouter from './routes/adminRoutes';
+import renderingGuestFilesRouter from './routes/renderingGuestRoutes';
 import apiRouter from './routes/apiRoutes';
 import session from 'express-session';
 import { authGuard } from './middleware/authMiddleware';
@@ -27,7 +29,7 @@ app.use(session({
     resave: false,                   // don't save session if unmodified
     saveUninitialized: false,        // don't create session until something is stored
     cookie: { secure: false }       
-  }));
+}));
 
 app.use(authGuard);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -35,8 +37,10 @@ app.get('/', (req, res) => {
     res.redirect('/visitor/homepage');
 });
 
+app.use('/admin', (renderingAdminFilesRouter));
 app.use('/employee', (renderingEmployeeFilesRouter));
 app.use('/visitor', (renderingVisitorFilesRouter));
+app.use('/guest', renderingGuestFilesRouter);
 app.use('/api/', (apiRouter));
 
 app.use((req, res) => {

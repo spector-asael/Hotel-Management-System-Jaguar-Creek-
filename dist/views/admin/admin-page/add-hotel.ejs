@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin/admin.css"> 
+    <title>Add Hotel</title>
+</head>
+<body>
+    <%- include('../partials/adminmenu') %>
+    <div class="form">
+        <div class="wrapper">
+            <form action="/api/addhotel" method="POST" enctype="multipart/form-data">
+                <input type="text" id="hotel-name" name="room_name" placeholder="Hotel Name" required>
+                <input type="number" id="location" name="room_capacity" placeholder="capacity" required>
+                <input type="text" id="price-per-night" name="price_per_night" placeholder="Price per Night" required>
+                <input type="text" id="description" name="description" placeholder="Description" required>
+                <div class="image-upload">
+                    <label for="fileInput">
+                      <div class="image-holder">
+                        <span>Select an image</span>
+                        <img id="preview" src="#" alt="Image Preview" style="display:none;" />
+                      </div>
+                    </label>
+                    <input type="file" id="fileInput" name="room_image" accept="image/*" />
+                  </div>
+                
+                
+                <button type="submit" id="admin-add">Add</button>
+            </form>
+        </div>
+    </div>
+    
+</body>
+</html>

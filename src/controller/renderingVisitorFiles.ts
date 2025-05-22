@@ -31,3 +31,13 @@ export const loadContactPage = (req: Request, res: Response) => {
 export const loadAboutPage = (req: Request, res: Response) => {
     res.render('visitor/about/about');
 } 
+
+export const loadVisitorRooms = (req: Request, res: Response) => {
+    const user = req.session.user as { role: number } | undefined;
+
+    if(!user){
+        res.send("Hello, world!")
+    } else if(user.role == 0){
+        res.redirect('/guest/rooms');
+    }
+}

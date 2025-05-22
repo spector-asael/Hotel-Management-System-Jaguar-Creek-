@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../db/config"));
 const reservationInterface_1 = __importDefault(require("../interfaces/reservationInterface"));
+const hotelroom_1 = __importDefault(require("./hotelroom"));
 class Reservation extends reservationInterface_1.default {
     constructor(reservation_id, user_id, room_id, start_date, end_date) {
         super(reservation_id, user_id, room_id, start_date, end_date);
@@ -50,7 +51,6 @@ class Reservation extends reservationInterface_1.default {
     }
     addReservation() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("hi");
             const query = `
             INSERT INTO reservations (
                 user_id,
@@ -58,11 +58,13 @@ class Reservation extends reservationInterface_1.default {
                 start_date,
                 end_date
             ) VALUES ($1, $2, $3, $4)
+             RETURNING reservation_id
         `;
             const values = [this.user_id, this.room_id, this.start_date, this.end_date];
             try {
-                yield config_1.default.query(query, values);
+                const result = yield config_1.default.query(query, values);
                 console.log('Reservation added successfully');
+                return result.rows[0].reservation_id;
             }
             catch (err) {
                 console.error('Error adding reservation:', err);
@@ -70,32 +72,43 @@ class Reservation extends reservationInterface_1.default {
             }
         });
     }
-    getAllReservations() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const query = 'SELECT * FROM reservations';
-            try {
-                const result = yield config_1.default.query(query);
-                return result.rows.map(row => new Reservation(row.reservation_id, row.user_id, row.room_id, new Date(row.start_date), new Date(row.end_date)));
-            }
-            catch (err) {
-                console.error('Error fetching all reservations:', err);
-                throw err;
-            }
-        });
+    /*
+    public async getAllReservations(): Promise<ReservationInterface[]> {
+        const query = 'SELECT * FROM reservations';
+
+        try {
+            const result = await pool.query(query);
+            return result.rows.map(row => new Reservation(
+                row.reservation_id,
+                row.user_id,
+                row.room_id,
+                new Date(row.start_date),
+                new Date(row.end_date)
+            ));
+        } catch (err) {
+            console.error('Error fetching all reservations:', err);
+            throw err;
+        }
     }
-    getReservationsByUserId(user_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const query = 'SELECT * FROM reservations WHERE user_id = $1';
-            try {
-                const result = yield config_1.default.query(query, [user_id]);
-                return result.rows.map(row => new Reservation(row.reservation_id, row.user_id, row.room_id, new Date(row.start_date), new Date(row.end_date)));
-            }
-            catch (err) {
-                console.error('Error fetching reservations by user ID:', err);
-                throw err;
-            }
-        });
+
+    public async getReservationsByUserId(user_id: number): Promise<ReservationInterface[]> {
+        const query = 'SELECT * FROM reservations WHERE user_id = $1';
+
+        try {
+            const result = await pool.query(query, [user_id]);
+            return result.rows.map(row => new Reservation(
+                row.reservation_id,
+                row.user_id,
+                row.room_id,
+                new Date(row.start_date),
+                new Date(row.end_date)
+            ));
+        } catch (err) {
+            console.error('Error fetching reservations by user ID:', err);
+            throw err;
+        }
     }
+    */
     static findReservationByUserId(user_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
@@ -108,6 +121,29 @@ class Reservation extends reservationInterface_1.default {
                 console.error('Error fetching reservation by user ID:', error);
                 throw error;
             }
+        });
+    }
+    calculateTotalPrice() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.room_id) {
+                throw new Error("Room ID is not set");
+            }
+            const room = yield hotelroom_1.default.getRoomById(this.room_id);
+            if (!room) {
+                throw new Error("Room not found");
+            }
+            const priceRate = room.getRoomPriceRate();
+            const start = new Date(this.start_date);
+            const end = new Date(this.end_date);
+            // Normalize time to midnight for accurate day diff
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            const timeDiff = end.getTime() - start.getTime();
+            if (timeDiff < 0) {
+                throw new Error("End date cannot be before start date");
+            }
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // Add 1 to include same-day stays
+            return days * priceRate;
         });
     }
 }

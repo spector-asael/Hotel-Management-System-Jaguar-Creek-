@@ -1,5 +1,6 @@
 import pool from '../db/config';
 import ReservationInterface from '../interfaces/reservationInterface'
+import HotelRoom from './hotelroom';
 
 class Reservation extends ReservationInterface {
     constructor(
@@ -52,8 +53,8 @@ class Reservation extends ReservationInterface {
         this.end_date = end_date;
     }
 
-    public async addReservation(): Promise<void> {
-        console.log("hi");
+    public async addReservation(): Promise<number> {
+       
         const query = `
             INSERT INTO reservations (
                 user_id,
@@ -61,18 +62,24 @@ class Reservation extends ReservationInterface {
                 start_date,
                 end_date
             ) VALUES ($1, $2, $3, $4)
+             RETURNING reservation_id
         `;
         const values = [this.user_id, this.room_id, this.start_date, this.end_date];
 
         try {
-            await pool.query(query, values);
+            const result = await pool.query(query, values);
             console.log('Reservation added successfully');
+            
+            return result.rows[0].reservation_id;
         } catch (err) {
             console.error('Error adding reservation:', err);
             throw err;
         }
+
+        
     }
 
+    /*
     public async getAllReservations(): Promise<ReservationInterface[]> {
         const query = 'SELECT * FROM reservations';
 
@@ -108,6 +115,7 @@ class Reservation extends ReservationInterface {
             throw err;
         }
     }
+    */
 
     public static async findReservationByUserId(user_id: number) {
         const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
@@ -122,6 +130,36 @@ class Reservation extends ReservationInterface {
         }
     }
     
+    public async calculateTotalPrice(): Promise<number> {
+        if (!this.room_id) {
+            throw new Error("Room ID is not set");
+        }
+
+        const room = await HotelRoom.getRoomById(this.room_id);
+
+        if (!room) {
+            throw new Error("Room not found");
+        }
+
+        const priceRate = room.getRoomPriceRate();
+
+        const start = new Date(this.start_date);
+        const end = new Date(this.end_date);
+
+        // Normalize time to midnight for accurate day diff
+        start.setHours(0, 0, 0, 0);
+        end.setHours(0, 0, 0, 0);
+
+        const timeDiff = end.getTime() - start.getTime();
+
+        if (timeDiff < 0) {
+            throw new Error("End date cannot be before start date");
+        }
+
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // Add 1 to include same-day stays
+
+        return days * priceRate;
+    }
 }
 
 export default Reservation;

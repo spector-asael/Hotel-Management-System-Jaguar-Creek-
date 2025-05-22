@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Guest from '../models/guest'; // Adjust import path as needed
 import User from '../models/user'; // Adjust import path as needed
 import Reservation from '../models/reservations'; // Adjust import path as needed
+import { Transactions } from '../models/transactions';
 
 export const bookHotelNew = async (req: Request, res: Response) => {
     try {
@@ -58,7 +59,7 @@ export const bookHotelNew = async (req: Request, res: Response) => {
         );
 
         await reservation.addReservation();
-
+        createTransaction(reservation);
         res.render('employee/book/success', {
             message: "Booking successful"
         });
@@ -120,7 +121,9 @@ export const bookHotelExisting = async (req: Request, res: Response) => {
             end
         );
 
-        await reservation.addReservation();
+        const reservationID = await reservation.addReservation();
+        reservation.setReservationId(reservationID);
+        createTransaction(reservation);
 
         res.render('employee/book/success', {
             message: "Booking successful"
@@ -133,3 +136,10 @@ export const bookHotelExisting = async (req: Request, res: Response) => {
         });
     }
 };
+
+const createTransaction = async (reservation: Reservation) => {
+    const totalPrice = await reservation.calculateTotalPrice();
+    const transaction = new Transactions(0, reservation.getReservationId(), new Date(), totalPrice, 0);
+    transaction.addTransactionToDB();
+    return;
+}

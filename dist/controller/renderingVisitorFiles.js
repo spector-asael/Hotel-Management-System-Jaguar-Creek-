@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadAboutPage = exports.loadContactPage = exports.loadTeamPage = exports.loadGuestHomepage = exports.loadSignupSuccess = exports.loadSignupForm = exports.loadHomePage = exports.loadLoginForm = void 0;
+exports.loadVisitorRooms = exports.loadAboutPage = exports.loadContactPage = exports.loadTeamPage = exports.loadGuestHomepage = exports.loadSignupSuccess = exports.loadSignupForm = exports.loadHomePage = exports.loadLoginForm = void 0;
 const loadLoginForm = (req, res) => {
     res.render('visitor/login/login');
 };
@@ -33,3 +33,13 @@ const loadAboutPage = (req, res) => {
     res.render('visitor/about/about');
 };
 exports.loadAboutPage = loadAboutPage;
+const loadVisitorRooms = (req, res) => {
+    const user = req.session.user;
+    if (!user) {
+        res.send("Hello, world!");
+    }
+    else if (user.role == 0) {
+        res.redirect('/guest/rooms');
+    }
+};
+exports.loadVisitorRooms = loadVisitorRooms;

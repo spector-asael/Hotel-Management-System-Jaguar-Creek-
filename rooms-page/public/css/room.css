@@ -1,0 +1,106 @@
+.main-body{
+    display: grid;
+    grid-template-columns: 240px 3fr 1fr;
+    height: 100vh;
+}
+.container{
+    grid-column: 1;
+    margin: 0px;
+    background-color: white;
+    color: black;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+   
+}
+.container a{
+    text-decoration: none;
+    color: white;
+    text-align:center;
+    padding: 20px;
+    background-color: black;
+    width: 200px;
+    height: 20px;
+    margin: 10px;
+    border-radius: 5px;
+    
+}
+.container a:hover{
+    background-color: #8b8b8b;
+    color: black;
+}
+.main-image{
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.images{
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    margin: 20px;
+    background-color: rgb(221, 216, 216);
+    place-items: center;
+    border-radius: 8px;
+}
+.images img{
+    width: 300px;
+    height: 200px;
+    border-radius: 5px;
+}
+.description{
+    grid-column: 2;
+    margin: 20px;
+    color: black;
+    padding: 20px;
+    border-radius: 5px;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    justify-items: flex-start;
+}
+#description{
+    width: 200px;
+}
+.booking form{
+    width: 150px;
+    background-color:rgb(221, 216, 216);
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+.booking form div{
+    width: 125px;
+    
+
+}
+.booking form input{
+    border: none;
+    
+    border-radius: 5px;
+    height: 20px;
+}
+.booking button{
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/employee/css/employee.css">
+    <title>Reservations</title>
+    <style> 
+        .modal {
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 400px;
+  box-shadow: 0 0 10px #000;
+  position: relative;
+}
+
+.modal-close {
+  color: #aaa;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: black;
+}
+
+#modal-confirm-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+
+#modal-cancel-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+    </style>
+</head>
+<body>
+    <%- include('../partials/menu') %>
+
+
+    <% if (reservations.length != 0) { %>
+     
+    <table class="hotel-table">
+        <thead>
+          <tr>
+            <th>Reservation ID</th>
+            <th>User ID</th>
+            <th>Room ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th> Transaction </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% reservations.forEach(reservation => { %>
+            <tr>
+              <td><%= reservation.reservation_id %></td>
+              <td><%= reservation.user_id %></td>
+              <td><%= reservation.room_id %></td>
+              <td><%= reservation.start_date.toISOString().slice(0, 10) %></td>
+              <td><%= reservation.end_date.toISOString().slice(0, 10) %></td>
+              <td> <button id="process-transaction" value="<%= reservation.reservation_id %>" > Process Transaction </button> </td>
+            </tr>
+          <% }) %>
+        </tbody>
+    </table>
+    <% } else { %>
+        <div class="search-container">
+            <h2> No reservations found for this user</h2>
+        </div>
+    <% } %>
+    <!-- Modal container (hidden by default) -->
+    <div id="transaction-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <h2>Transaction Details</h2>
+      <p><strong>Transaction ID:</strong> <span id="modal-transaction-id"></span></p>
+      <p><strong>Reservation ID:</strong> <span id="modal-reservation-id"></span></p>
+      <p><strong>Transaction Date:</strong> <span id="modal-transaction-date"></span></p>
+      <p><strong>Transaction Amount:</strong> $<span id="modal-transaction-amount"></span></p>
+      <p><strong>Transaction Status:</strong> <span id="modal-transaction-status"></span></p>
+      <button id="modal-confirm-btn">Process Transaction</button>
+      <button id="modal-cancel-btn">Cancel</button>
+    </div>
+  </div>
+  
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  const transactionButtons = document.querySelectorAll('button#process-transaction');
+  const modal = document.getElementById('transaction-modal');
+  const modalClose = document.getElementById('modal-close');
+  const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+  const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+  // Elements to fill inside modal
+  const modalTransactionId = document.getElementById('modal-transaction-id');
+  const modalReservationId = document.getElementById('modal-reservation-id');
+  const modalTransactionDate = document.getElementById('modal-transaction-date');
+  const modalTransactionAmount = document.getElementById('modal-transaction-amount');
+  const modalTransactionStatus = document.getElementById('modal-transaction-status');
+
+  let currentTransaction = null;
+
+  transactionButtons.forEach(button => {
+    button.addEventListener('click', async () => {
+      const reservationId = button.value;
+
+      try {
+        const findResponse = await fetch('/api/transactions/find', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reservation_id: reservationId })
+        });
+
+        if (!findResponse.ok) throw new Error('Failed to fetch transaction data');
+
+        const transaction = await findResponse.json();
+
+        if (transaction.error) {
+          throw new Error(transaction.error);
+        }
+
+        currentTransaction = transaction;
+
+        // Fill modal fields with transaction data
+        modalTransactionId.textContent = transaction.transaction_id;
+        modalReservationId.textContent = transaction.reservation_id;
+        modalTransactionDate.textContent = new Date(transaction.transaction_date).toLocaleString();
+        modalTransactionAmount.textContent = transaction.transaction_amount;
+        modalTransactionStatus.textContent = transaction.transaction_status;
+
+        // Show modal
+        modal.style.display = 'block';
+
+      } catch (error) {
+        console.error('Transaction processing error:', error);
+        alert('Something went wrong while fetching the transaction.');
+      }
+    });
+  });
+
+  // Close modal handlers
+  modalClose.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  modalCancelBtn.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  // Confirm button handler
+  modalConfirmBtn.onclick = async () => {
+    try {
+      const completeResponse = await fetch('/api/transaction/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservation_id: currentTransaction.reservation_id })
+      });
+
+      if (!completeResponse.ok) throw new Error('Failed to complete transaction');
+
+      alert('Transaction completed successfully!');
+      modal.style.display = 'none';
+      location.reload();
+
+    } catch (error) {
+      console.error('Transaction processing error:', error);
+      alert('Something went wrong while completing the transaction.');
+    }
+  };
+
+  // Close modal if clicking outside the modal content
+  window.onclick = event => {
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  };
+});
+
+</script>
+        
+</body>
+<script src="/employee/scripts/index.js"></script>
+</html>

@@ -17,4 +17,5 @@ renderingEmployeeFilesRouter.get('/dashboard/room', renderingEmployeeFiles_1.loa
 renderingEmployeeFilesRouter.get('/dashboard/transaction', renderingEmployeeFiles_1.loadEmployeeTransaction);
 renderingEmployeeFilesRouter.post('/guest/id', renderingEmployeeFiles_1.searchGuestById);
 renderingEmployeeFilesRouter.post('/guest/username', renderingEmployeeFiles_1.searchGuestByUsername);
+renderingEmployeeFilesRouter.post('/guest/reservations/:id', renderingEmployeeFiles_1.loadUserReservation);
 exports.default = renderingEmployeeFilesRouter;
