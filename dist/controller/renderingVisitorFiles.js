@@ -16,35 +16,35 @@ exports.loadVisitorRooms = exports.loadAboutPage = exports.loadContactPage = exp
 const reservations_1 = __importDefault(require("../models/reservations"));
 const hotelroom_1 = __importDefault(require("../models/hotelroom"));
 const loadLoginForm = (req, res) => {
-    res.render('visitor/login/login');
+    res.render('visitor/login/login', { logged: !!req.session.user });
 };
 exports.loadLoginForm = loadLoginForm;
 const loadHomePage = (req, res) => {
-    res.render('visitor/homepage/homepage');
+    res.render('visitor/homepage/homepage', { logged: !!req.session.user });
 };
 exports.loadHomePage = loadHomePage;
 const loadSignupForm = (req, res) => {
-    res.render('visitor/signup/signup');
+    res.render('visitor/signup/signup', { logged: !!req.session.user });
 };
 exports.loadSignupForm = loadSignupForm;
 const loadSignupSuccess = (req, res) => {
-    res.render('visitor/success/signup-success');
+    res.render('visitor/success/signup-success', { logged: !!req.session.user });
 };
 exports.loadSignupSuccess = loadSignupSuccess;
 const loadGuestHomepage = (req, res) => {
-    res.render('guest/homepage/homepage');
+    res.render('guest/homepage/homepage', { logged: !!req.session.user });
 };
 exports.loadGuestHomepage = loadGuestHomepage;
 const loadTeamPage = (req, res) => {
-    res.render('visitor/team/team');
+    res.render('visitor/team/team', { logged: !!req.session.user });
 };
 exports.loadTeamPage = loadTeamPage;
 const loadContactPage = (req, res) => {
-    res.render('visitor/contact/contact');
+    res.render('visitor/contact/contact', { logged: !!req.session.user });
 };
 exports.loadContactPage = loadContactPage;
 const loadAboutPage = (req, res) => {
-    res.render('visitor/about/about');
+    res.render('visitor/about/about', { logged: !!req.session.user });
 };
 exports.loadAboutPage = loadAboutPage;
 const loadVisitorRooms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,10 +63,15 @@ const loadVisitorRooms = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         const takenDays = yield getAllReservedDays(room);
         if (!takenDays) {
-            res.send("An error occured");
+            res.send("An error occurred");
             return;
         }
-        res.render("guest/rooms/room-visitor", { hotels, room, takenDays });
+        res.render("guest/rooms/room-visitor", {
+            hotels,
+            room,
+            takenDays,
+            logged: false
+        });
     }
     else if (user.role == 0) {
         res.redirect("/guest/rooms/1");

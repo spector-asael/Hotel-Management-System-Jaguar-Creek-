@@ -19,7 +19,7 @@ export const loadAllReservations = async (req: Request, res: Response) => {
     const reservations = await Reservation.findReservationByUserId(guest_id);
 
     const guest_username = guest?.getUsername();
-    res.render("guest/reservations/reservations", {guest_username, reservations, hotels})
+    res.render("guest/reservations/reservations", {guest_username, reservations, hotels, logged: true})
 }
 export const loadGuestRooms = async (req: Request, res: Response) => {
 
@@ -42,7 +42,7 @@ export const loadGuestRooms = async (req: Request, res: Response) => {
                 res.send("An error occured");
                 return;
             }
-        res.render("guest/rooms/rooms", {hotels,room, takenDays})
+        res.render("guest/rooms/rooms", {hotels,room, takenDays, logged: true})
 }
 
 const getAllReservedDays = async (hotel: HotelRoom): Promise<Date[]> => {

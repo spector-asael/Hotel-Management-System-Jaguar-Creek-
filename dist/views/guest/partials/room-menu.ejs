@@ -1,7 +1,7 @@
 <div class="container">
     <a href="/guest/reservations/" class="menu-btn"> View Reservations </a>
     <% hotels.forEach(hotel => { %>
-      <a href="/guest/rooms/<%= hotel.room_id %>" class="menu-btn">
+      <a href="../rooms/<%= hotel.room_id %>" class="menu-btn">
         <%= hotel.room_name %>
       </a>
     <% }); %>

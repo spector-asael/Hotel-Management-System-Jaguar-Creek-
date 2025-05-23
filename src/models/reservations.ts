@@ -118,7 +118,17 @@ class Reservation extends ReservationInterface {
     */
 
     public static async findReservationByUserId(user_id: number) {
-        const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
+        const query = `
+                SELECT r.*
+                FROM reservations r
+                WHERE r.user_id = $1
+                AND NOT EXISTS (
+                SELECT 1
+                FROM transactions t
+                WHERE t.reservation_id = r.reservation_id
+                AND t.transaction_status = 1
+        );
+        `;
         const values = [user_id];
     
         try {

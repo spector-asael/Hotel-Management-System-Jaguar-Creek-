@@ -106,7 +106,17 @@ class Reservation extends reservationInterface_1.default {
         */
     static findReservationByUserId(user_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';
+            const query = `
+                SELECT r.*
+                FROM reservations r
+                WHERE r.user_id = $1
+                AND NOT EXISTS (
+                SELECT 1
+                FROM transactions t
+                WHERE t.reservation_id = r.reservation_id
+                AND t.transaction_status = 1
+        );
+        `;
             const values = [user_id];
             try {
                 const result = yield config_1.default.query(query, values); // assuming this.db is your database instance

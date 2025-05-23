@@ -27,7 +27,7 @@ const loadAllReservations = (req, res) => __awaiter(void 0, void 0, void 0, func
     const guest = yield guest_1.default.findByID(guest_id);
     const reservations = yield reservations_1.default.findReservationByUserId(guest_id);
     const guest_username = guest === null || guest === void 0 ? void 0 : guest.getUsername();
-    res.render("guest/reservations/reservations", { guest_username, reservations, hotels });
+    res.render("guest/reservations/reservations", { guest_username, reservations, hotels, logged: true });
 });
 exports.loadAllReservations = loadAllReservations;
 const loadGuestRooms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,7 +47,7 @@ const loadGuestRooms = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.send("An error occured");
         return;
     }
-    res.render("guest/rooms/rooms", { hotels, room, takenDays });
+    res.render("guest/rooms/rooms", { hotels, room, takenDays, logged: true });
 });
 exports.loadGuestRooms = loadGuestRooms;
 const getAllReservedDays = (hotel) => __awaiter(void 0, void 0, void 0, function* () {

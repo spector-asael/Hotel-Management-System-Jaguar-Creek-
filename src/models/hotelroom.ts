@@ -80,7 +80,7 @@ class HotelRoom extends HotelRoomInterface {
         `;
         const values = [
             this.room_name,
-            this.room_image_path,
+            '/' + this.room_image_path,
             this.room_description,
             this.room_price_rate,
             this.room_capacity

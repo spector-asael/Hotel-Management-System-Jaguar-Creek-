@@ -75,6 +75,16 @@
     height: 40px;
     margin-top: 0px;
 }
+.login{
+    display: inline-block;
+    background-color: black;
+    color: white;
+    width: 100%;
+    height: 40px;
+    margin-top: 0px;
+    border: none;
+    margin: 0px;
+}
 
 #mainimg {
     grid-column: 2 / span 2;
@@ -153,14 +163,6 @@
     justify-content: center;
     align-items: flex-start;
     font-family: 'inria serif', serif;
-}
-
-#login {
-    background-color: black;
-    color: white;
-    width: 100%;
-    height: 40px;
-    margin-top: 0px;
 }
 
 #phone {

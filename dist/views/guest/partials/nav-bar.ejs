@@ -7,10 +7,14 @@
   </div>
   <nav class="nav-list">
     <a href="/"> Home </a>
-    <a href="/visitor/rooms">Rooms</a>
+    <a href="/visitor/rooms/1">Rooms</a>
     <a href="/visitor/about">About</a>
     <a href="/visitor/team">Team</a>
-    <a href="/visitor/login" id="login">Login</a>
+    <% if (logged == true) { %>
+    <a><form method="POST" action="/api/logout"> <button type="submit" class="login logout"> Logout </button> </form></a>
+    <% } else { %>
+      <a href="/visitor/login" id="login">Login</a>
+    <% } %>
   </nav>
 </div>
   
