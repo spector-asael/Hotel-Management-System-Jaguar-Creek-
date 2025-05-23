@@ -72,43 +72,38 @@ class Reservation extends reservationInterface_1.default {
             }
         });
     }
+    static getAllReservationsForRoom(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = 'SELECT * FROM reservations WHERE room_id = $1';
+            try {
+                const result = yield config_1.default.query(query, [id]);
+                return result.rows.map(row => new Reservation(row.reservation_id, row.user_id, row.room_id, new Date(row.start_date), new Date(row.end_date)));
+            }
+            catch (err) {
+                console.error('Error fetching all reservations:', err);
+                throw err;
+            }
+        });
+    }
     /*
-    public async getAllReservations(): Promise<ReservationInterface[]> {
-        const query = 'SELECT * FROM reservations';
-
-        try {
-            const result = await pool.query(query);
-            return result.rows.map(row => new Reservation(
-                row.reservation_id,
-                row.user_id,
-                row.room_id,
-                new Date(row.start_date),
-                new Date(row.end_date)
-            ));
-        } catch (err) {
-            console.error('Error fetching all reservations:', err);
-            throw err;
+        public async getReservationsByUserId(user_id: number): Promise<ReservationInterface[]> {
+            const query = 'SELECT * FROM reservations WHERE user_id = $1';
+    
+            try {
+                const result = await pool.query(query, [user_id]);
+                return result.rows.map(row => new Reservation(
+                    row.reservation_id,
+                    row.user_id,
+                    row.room_id,
+                    new Date(row.start_date),
+                    new Date(row.end_date)
+                ));
+            } catch (err) {
+                console.error('Error fetching reservations by user ID:', err);
+                throw err;
+            }
         }
-    }
-
-    public async getReservationsByUserId(user_id: number): Promise<ReservationInterface[]> {
-        const query = 'SELECT * FROM reservations WHERE user_id = $1';
-
-        try {
-            const result = await pool.query(query, [user_id]);
-            return result.rows.map(row => new Reservation(
-                row.reservation_id,
-                row.user_id,
-                row.room_id,
-                new Date(row.start_date),
-                new Date(row.end_date)
-            ));
-        } catch (err) {
-            console.error('Error fetching reservations by user ID:', err);
-            throw err;
-        }
-    }
-    */
+        */
     static findReservationByUserId(user_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = 'SELECT * FROM RESERVATIONS WHERE user_id = $1';

@@ -79,12 +79,12 @@ class Reservation extends ReservationInterface {
         
     }
 
-    /*
-    public async getAllReservations(): Promise<ReservationInterface[]> {
-        const query = 'SELECT * FROM reservations';
+    
+    public static async getAllReservationsForRoom(id: number): Promise<ReservationInterface[]> {
+        const query = 'SELECT * FROM reservations WHERE room_id = $1';
 
-        try {
-            const result = await pool.query(query);
+        try {   
+            const result = await pool.query(query, [id]);
             return result.rows.map(row => new Reservation(
                 row.reservation_id,
                 row.user_id,
@@ -97,7 +97,7 @@ class Reservation extends ReservationInterface {
             throw err;
         }
     }
-
+/*
     public async getReservationsByUserId(user_id: number): Promise<ReservationInterface[]> {
         const query = 'SELECT * FROM reservations WHERE user_id = $1';
 

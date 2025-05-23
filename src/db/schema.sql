@@ -13,7 +13,6 @@ INSERT INTO role (role_id, role_name) VALUES
 (0, 'guest'),
 (1, 'employee'),
 (2, 'admin'),
-(3, 'none'); -- customers with no roles
 
 CREATE TABLE users (
     user_id INT PRIMARY KEY,
@@ -35,18 +34,33 @@ CREATE TABLE hotel_rooms (
     room_capacity INT NOT NULL
 );
 
-CREATE TABLE reservations (
-    reservation_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    room_id INT REFERENCES hotel_rooms(room_id) ON DELETE CASCADE,
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL
-);
+export const cancelReservation = async (req: Request, res: Response) => {
+  const { reservation_id } = req.params;
 
-CREATE TABLE transactions (
-    transaction_id SERIAL PRIMARY KEY,
-    reservation_id INT REFERENCES reservations(reservation_id) ON DELETE CASCADE,
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    transaction_amount DECIMAL(10, 2) NOT NULL,
-    transaction_status INT NOT NULL -- 0: pending, 1: completed
-);
+  if (!reservation_id) {
+    return res.status(400).json({ message: 'Reservation ID is required.' });
+  }
+
+  try {
+    // Check if reservation exists
+    const check = await pool.query(
+      'SELECT * FROM reservations WHERE reservation_id = $1',
+      [reservation_id]
+    );
+
+    if (check.rows.length === 0) {
+      return res.status(404).json({ message: 'Reservation not found.' });
+    }
+
+    // Delete reservation — this will cascade delete the transaction
+    await pool.query(
+      'DELETE FROM reservations WHERE reservation_id = $1',
+      [reservation_id]
+    );
+
+    return res.status(200).json({ message: 'Reservation and associated transaction cancelled successfully.' });
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};

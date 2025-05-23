@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTransactionStatus = exports.returnTransactionInformation = void 0;
+exports.cancelReservation = exports.updateTransactionStatus = exports.returnTransactionInformation = void 0;
 const transactions_1 = require("../models/transactions");
+const config_1 = __importDefault(require("../db/config"));
 const returnTransactionInformation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reservationID = req.body.reservation_id;
     const transaction = yield transactions_1.Transactions.findTransactionByReservationID(reservationID);
@@ -52,3 +56,28 @@ const updateTransactionStatus = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.updateTransactionStatus = updateTransactionStatus;
+const cancelReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { reservation_id } = req.body;
+    if (!reservation_id) {
+        res.status(400).json({ message: 'Reservation ID is required.' });
+        return;
+    }
+    try {
+        // Check if reservation exists
+        const check = yield config_1.default.query('SELECT * FROM reservations WHERE reservation_id = $1', [reservation_id]);
+        if (check.rows.length === 0) {
+            res.status(404).json({ message: 'Reservation not found.' });
+            return;
+        }
+        // Delete reservation — this will cascade delete the transaction
+        yield config_1.default.query('DELETE FROM reservations WHERE reservation_id = $1', [reservation_id]);
+        res.status(200).json({ message: 'Reservation and associated transaction cancelled successfully.' });
+        return;
+    }
+    catch (error) {
+        console.error('Error cancelling reservation:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+        return;
+    }
+});
+exports.cancelReservation = cancelReservation;

@@ -22,6 +22,6 @@ renderingVisitorFilesRouter.get('/contact', loadContactPage);
 
 renderingVisitorFilesRouter.get('/about', loadAboutPage);
 
-renderingVisitorFilesRouter.get('/rooms', loadVisitorRooms);
+renderingVisitorFilesRouter.get('/rooms/:id', loadVisitorRooms);
 
 export default renderingVisitorFilesRouter;
