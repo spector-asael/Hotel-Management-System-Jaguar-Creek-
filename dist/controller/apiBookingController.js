@@ -12,10 +12,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bookHotelExisting = exports.bookHotelNew = void 0;
+exports.bookHotelExisting = exports.bookHotelNew = exports.bookHotelGuest = void 0;
 const guest_1 = __importDefault(require("../models/guest")); // Adjust import path as needed
 const reservations_1 = __importDefault(require("../models/reservations")); // Adjust import path as needed
 const transactions_1 = require("../models/transactions");
+const hotelroom_1 = __importDefault(require("../models/hotelroom"));
+const bookHotelGuest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const hotel_id = Number(req.params.id);
+    const user_session = req.session.user;
+    const guest_id = user_session.id;
+    const { "check-in": checkIn, "check-out": checkOut } = req.body;
+    const hotel = yield hotelroom_1.default.getRoomById(hotel_id);
+    const guest = yield guest_1.default.findByID(guest_id);
+    if (!hotel) {
+        res.send("Error finding hotel");
+        return;
+    }
+    if (!guest) {
+        res.send("Error finding guest");
+        return;
+    }
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+        return res.render('guest/rooms/success', {
+            message: "Invalid check-in/check-out dates."
+        });
+    }
+    try {
+        const reservation = new reservations_1.default(0, // reservation_id (auto-generated)
+        guest.getUserId(), // assuming this is how it's stored
+        hotel.getRoomId(), start, end);
+        const reservationID = yield reservation.addReservation();
+        reservation.setReservationId(reservationID);
+        createTransaction(reservation);
+        res.render('guest/rooms/success', {
+            message: "Booking successful"
+        });
+    }
+    catch (err) {
+        console.error("Booking error (existing user):", err);
+        res.render('guest/rooms/success', {
+            message: "Server error while booking"
+        });
+    }
+});
+exports.bookHotelGuest = bookHotelGuest;
 const bookHotelNew = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { "first-name": firstName, "last-name": lastName, "phone-number": phoneNumber, email, "social-security-id": socialSecurityId, username, password, "check-in": checkIn, "check-out": checkOut, hotel, // room_id

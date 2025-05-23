@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="/employee/css/employee.css"/>
+  <title>Reservations</title>
+  <style>
+    .modal {
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 400px;
+      box-shadow: 0 0 10px #000;
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-close {
+      color: #aaa;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: black;
+    }
+
+    #modal-confirm-btn {
+      background-color: #f44336;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+
+    #modal-cancel-btn {
+      background-color: #ccc;
+      color: black;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+    <div style="grid-column: span 2; margin-bottom: -100px;">
+    <%- include('../partials/nav-bar') %>
+    </div>
+  <%- include('../partials/room-menu') %>
+
+  <% if (reservations.length != 0) { %>
+    <table class="hotel-table">
+      <thead>
+        <tr>
+          <th>Reservation ID</th>
+          <th>User ID</th>
+          <th>Room ID</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservations.forEach(reservation => { %>
+          <tr>
+            <td><%= reservation.reservation_id %></td>
+            <td><%= reservation.user_id %></td>
+            <td><%= reservation.room_id %></td>
+            <td><%= reservation.start_date.toISOString().slice(0, 10) %></td>
+            <td><%= reservation.end_date.toISOString().slice(0, 10) %></td>
+            <td>
+              <button class="cancel-reservation-btn" value="<%= reservation.reservation_id %>">
+                Cancel Reservation
+              </button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div class="search-container">
+      <h2>No reservations found for this user</h2>
+    </div>
+  <% } %>
+
+  <!-- Cancellation Modal -->
+  <div id="cancel-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <h2>Cancel Reservation</h2>
+      <p>Are you sure you want to cancel reservation <strong>#<span id="cancel-reservation-id"></span></strong>?</p>
+      <button id="modal-confirm-btn">Yes, Cancel</button>
+      <button id="modal-cancel-btn">No, Keep It</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cancelButtons = document.querySelectorAll('.cancel-reservation-btn');
+      const modal = document.getElementById('cancel-modal');
+      const modalClose = document.getElementById('modal-close');
+      const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+      const modalCancelBtn = document.getElementById('modal-cancel-btn');
+      const modalReservationId = document.getElementById('cancel-reservation-id');
+
+      let selectedReservationId = null;
+
+      cancelButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedReservationId = button.value;
+          modalReservationId.textContent = selectedReservationId;
+          modal.style.display = 'block';
+        });
+      });
+
+      modalClose.onclick = () => {
+        modal.style.display = 'none';
+      };
+
+      modalCancelBtn.onclick = () => {
+        modal.style.display = 'none';
+      };
+
+      modalConfirmBtn.onclick = async () => {
+        try {
+          const response = await fetch('/api/reservations/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reservation_id: selectedReservationId })
+          });
+
+          if (!response.ok) throw new Error('Cancellation failed');
+
+          alert('Reservation cancelled successfully.');
+          modal.style.display = 'none';
+          location.reload();
+
+        } catch (error) {
+          console.error('Error cancelling reservation:', error);
+          alert('An error occurred while cancelling the reservation.');
+        }
+      };
+
+      window.onclick = event => {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      };
+    });
+  </script>
+
+  <script src="/employee/scripts/index.js"></script>
+</body>
+</html>

@@ -57,7 +57,7 @@ class Guest extends GuestInterface {
         }
     }
 
-    static async findByID(user_id: string): Promise<Guest | null> {
+    static async findByID(user_id: any): Promise<Guest | null> {
         const query = 'SELECT * FROM users WHERE user_id = $1';
         const values = [user_id];
 

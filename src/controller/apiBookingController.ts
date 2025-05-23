@@ -3,7 +3,61 @@ import Guest from '../models/guest'; // Adjust import path as needed
 import User from '../models/user'; // Adjust import path as needed
 import Reservation from '../models/reservations'; // Adjust import path as needed
 import { Transactions } from '../models/transactions';
+import HotelRoom from '../models/hotelroom';
+import { UserSession } from '../middleware/authMiddleware';
 
+export const bookHotelGuest = async (req: Request, res: Response) => {
+    const hotel_id = Number(req.params.id);
+    const user_session = req.session.user as UserSession;
+    const guest_id = user_session.id
+
+    const{"check-in": checkIn, "check-out": checkOut} = req.body;
+        
+    const hotel = await HotelRoom.getRoomById(hotel_id);
+    const guest = await Guest.findByID(guest_id);
+
+    if(!hotel){
+        res.send("Error finding hotel");
+        return
+    }
+
+    if(!guest){
+        res.send("Error finding guest");
+        return;
+    }
+
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
+            return res.render('guest/rooms/success', {
+                message: "Invalid check-in/check-out dates."
+            });
+        }
+    try {
+    const reservation = new Reservation(
+        0, // reservation_id (auto-generated)
+        guest.getUserId(), // assuming this is how it's stored
+        hotel.getRoomId(),
+        start,
+        end
+    );
+
+    const reservationID = await reservation.addReservation();
+    reservation.setReservationId(reservationID);
+    createTransaction(reservation);
+
+    res.render('guest/rooms/success', {
+        message: "Booking successful"
+    });
+
+    } catch (err) {
+        console.error("Booking error (existing user):", err);
+        res.render('guest/rooms/success', {
+            message: "Server error while booking"
+        });
+    }
+
+}
 export const bookHotelNew = async (req: Request, res: Response) => {
     try {
         const {

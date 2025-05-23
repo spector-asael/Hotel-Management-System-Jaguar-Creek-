@@ -37,11 +37,11 @@
     background-color: #8b8b8b;
     color: black;
 }
-.main-image{
+.hotel-image{
     grid-column: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 5fr 1fr;
 }
 .images{
     grid-column: 1;
@@ -51,7 +51,12 @@
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 5px;
-    margin: 20px;
+    margin: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    margin-bottom: -60px;
     background-color: rgb(221, 216, 216);
     place-items: center;
     border-radius: 8px;
@@ -103,4 +108,8 @@
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
+}
+.calendar{
+    grid-row: 2;
+    grid-column: 2;
 }

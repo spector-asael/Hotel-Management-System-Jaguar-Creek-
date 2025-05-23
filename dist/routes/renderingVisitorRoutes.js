@@ -17,5 +17,5 @@ renderingVisitorFilesRouter.get('/signup-success', renderingVisitorFiles_js_1.lo
 renderingVisitorFilesRouter.get('/team', renderingVisitorFiles_js_1.loadTeamPage);
 renderingVisitorFilesRouter.get('/contact', renderingVisitorFiles_js_1.loadContactPage);
 renderingVisitorFilesRouter.get('/about', renderingVisitorFiles_js_1.loadAboutPage);
-renderingVisitorFilesRouter.get('/rooms', renderingVisitorFiles_js_1.loadVisitorRooms);
+renderingVisitorFilesRouter.get('/rooms/:id', renderingVisitorFiles_js_1.loadVisitorRooms);
 exports.default = renderingVisitorFilesRouter;

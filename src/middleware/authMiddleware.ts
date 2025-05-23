@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
-interface UserSession {
+export interface UserSession {
   role: number;
+  id: number;
+  username: string;
 }
 
 const accessControl: { [prefix: string]: number } = {
@@ -22,7 +24,7 @@ export function authGuard(req: Request, res: Response, next: NextFunction) {
   for (const [prefix, minRole] of Object.entries(accessControl)) {
     if (path.startsWith(prefix)) {
       const user = req.session.user as UserSession | undefined;
-
+      
       if (!user) {
         return res.redirect('/visitor/login');
       }

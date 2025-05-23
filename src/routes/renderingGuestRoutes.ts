@@ -1,13 +1,15 @@
 import express from 'express'
-import { loadGuestRooms } from '../controller/guestRoutes';
+import { loadAllReservations, loadGuestRooms } from '../controller/guestRoutesController';
 
 const renderingGuestFilesRouter = express.Router();
 
 renderingGuestFilesRouter.get('/', (req, res)=>{
-    res.redirect('/guest/rooms');
+    res.redirect('/guest/rooms/1');
 })
 
-renderingGuestFilesRouter.get('/rooms', loadGuestRooms);
+renderingGuestFilesRouter.get('/rooms/:id', loadGuestRooms);
+
+renderingGuestFilesRouter.get('/reservations', loadAllReservations);
 
 
 export default renderingGuestFilesRouter
